@@ -20,7 +20,7 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
 
 	// Metrics debugging route
-	router.Handler(http.MethodGet, "/debug/vars", expvar.Handler())
+	router.Handler(http.MethodGet, "/v1/observability/metrics", expvar.Handler())
 
 	// DATABASE SCHEMA ROUTES
 
@@ -104,5 +104,5 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPatch, "/v1/reservations/:reservationID", app.updateReservationHandler)
 	router.HandlerFunc(http.MethodDelete, "/v1/reservations/:reservationID", app.deleteReservationHandler)
 
-	return app.recoverPanic(app.enableCORS(app.rateLimit(router)))
+	return app.metrics(app.recoverPanic(app.enableCORS(app.rateLimit(router))))
 }

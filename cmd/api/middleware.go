@@ -1,8 +1,10 @@
 package main
 
 import (
+	"expvar"
 	"fmt"
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
 
@@ -126,5 +128,103 @@ func (app *application) enableCORS(next http.Handler) http.Handler {
 		}
 
 		next.ServeHTTP(w, r)
+	})
+}
+
+// metricsResponseWriter is a light wrapper around http.ResponseWriter that records
+// status code and whether the header was written or not.
+type metricsResponseWriter struct {
+	wrapped       http.ResponseWriter
+	statusCode    int
+	headerWritten bool
+}
+
+// newMetricsResponseWriter is a factory function that sets the default status code to 200.
+func newMetricsResponseWriter(w http.ResponseWriter) *metricsResponseWriter {
+	return &metricsResponseWriter{
+		wrapped:    w,
+		statusCode: http.StatusOK,
+	}
+}
+
+// Header passes the http.ResponseWriter Header method.
+func (mw *metricsResponseWriter) Header() http.Header {
+	return mw.wrapped.Header()
+}
+
+// WriteHeader passes the http.ResponseWriter WriteHeader method, writing
+// the status code and indicating the header was written.
+func (mw *metricsResponseWriter) WriteHeader(statusCode int) {
+	mw.wrapped.WriteHeader(statusCode)
+
+	if !mw.headerWritten {
+		mw.statusCode = statusCode
+		mw.headerWritten = true
+	}
+}
+
+// Write passes the http.ResponseWriter Write method, setting the header
+// written to true.
+func (mw *metricsResponseWriter) Write(b []byte) (int, error) {
+	mw.headerWritten = true
+	return mw.wrapped.Write(b)
+}
+
+// Unwrap returns the existing http.ResponseWriter.
+func (mw *metricsResponseWriter) Unwrap() http.ResponseWriter {
+	return mw.wrapped
+}
+
+// metrics records statistics about requests and responses handled by the server.
+func (app *application) metrics(next http.Handler) http.Handler {
+	// NOTE: the total responses will always be 1 less than the total requests because
+	// during the first request, the metrics are recorded before the first response is
+	// sent.
+
+	var (
+		// REQ: total requests
+		totalRequestsReceived = expvar.NewInt("total_requests_received")
+
+		totalResponsesSent              = expvar.NewInt("total_responses_sent")
+		totalProcessingTimeMicroseconds = expvar.NewInt("total_processing_time_μs")
+		totalResponsesSentByStatus      = expvar.NewMap("total_responses_sent_by_status")
+
+		// REQ: total requests per route
+		totalRequestsByRoute = expvar.NewMap("total_requests_by_route")
+
+		// REQ: for error counts, consider any response with status code >= 400
+		totalResponsesErrorCount = expvar.NewInt("total_responses_error_count")
+
+		// REQ: average latency can be calculated by dividing the total processing time
+		// by the total requests received
+		averageLatency = expvar.NewFloat("average_latency_μs")
+	)
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Pre-processing
+
+		start := time.Now()
+		mw := newMetricsResponseWriter(w)
+
+		totalRequestsReceived.Add(1)
+		totalRequestsByRoute.Add(r.URL.Path, 1)
+
+		// Processing
+		next.ServeHTTP(mw, r)
+
+		// Post-processing
+
+		totalResponsesSent.Add(1)
+		totalResponsesSentByStatus.Add(strconv.Itoa(mw.statusCode), 1)
+		if mw.statusCode >= 400 {
+			totalResponsesErrorCount.Add(1)
+		}
+
+		// record processing time
+		duration := time.Since(start).Microseconds()
+		totalProcessingTimeMicroseconds.Add(duration)
+
+		// update average latency
+		averageLatency.Set(float64(totalProcessingTimeMicroseconds.Value()) / float64(totalRequestsReceived.Value()))
 	})
 }

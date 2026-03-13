@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/debug/vars"
+  url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/observability/metrics"
   auth: inherit
 
 settings:
