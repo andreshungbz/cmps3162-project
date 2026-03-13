@@ -1,0 +1,28 @@
+opencollection: 1.0.0
+
+info:
+  name: Basic Endpoints
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ""
+      port: ""
+      auth:
+        username: ""
+        password: ""
+      bypassProxy: ""
+
+docs:
+  content: |-
+    # Basic Endpoints
+
+    This collection consists of endpoints which do not interact with the database mode.
+  type: text/markdown
+bundled: false
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git

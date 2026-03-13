@@ -1,0 +1,14 @@
+opencollection: 1.0.0
+info:
+  name: "CMPS3162 Project Testing"
+  type: workspace
+
+collections:
+  - name: "Basic Endpoints"
+    path: "collections/Basic Endpoints"
+
+specs:
+
+docs: ''
+
+activeEnvironmentUid: 15cbtar00000000000000
