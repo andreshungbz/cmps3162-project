@@ -113,10 +113,20 @@ build/api:
 # Rate Limiting Middleware
 # ==================================================================================== #
 
-# Rate Limiting
-.PHONY: test/rate-limiting-ip
-test/rate-limiting-ip:
-	for i in {1..6}; do curl http://localhost:4000/v1/healthcheck; done
+# 1) Server Configuration (Expected: Retry-After of 1)
+.PHONY: test/rate-limiting-server-1
+test/rate-limiting-server-1:
+	go run ./cmd/api -db-dsn=${HOTEL_DB_DSN} -limiter-rps=0.75 -limiter-burst=2
+
+# 2) Server Configuration (Expected: Retry-After of 2)
+.PHONY: test/rate-limiting-server-2
+test/rate-limiting-server-2:
+	go run ./cmd/api -db-dsn=${HOTEL_DB_DSN} -limiter-rps=0.5 -limiter-burst=2
+
+# Test: requests in quick succession on the healthcheck endpoint
+.PHONY: test/rate-limiting-loop
+test/rate-limiting-loop:
+	for i in {1..40}; do curl -i http://localhost:4000/v1/healthcheck; done
 
 # ==================================================================================== #
 # Guest Model

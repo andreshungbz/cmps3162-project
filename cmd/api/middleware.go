@@ -72,8 +72,13 @@ func (app *application) rateLimit(next http.Handler) http.Handler {
 
 		// if client exceeds the rate limit, send an error response
 		if !clients[ip].limiter.Allow() {
+			// claim the next future token, determine its delay, then cancel it
+			res := clients[ip].limiter.Reserve()
+			delay := res.Delay()
+			res.Cancel()
+
 			mu.Unlock()
-			app.rateLimitExceededResponse(w, r)
+			app.rateLimitExceededResponse(w, r, delay)
 			return
 		}
 

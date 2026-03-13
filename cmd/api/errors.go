@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"net/http"
+	"strconv"
+	"time"
 )
 
 // logError writes server-side error messages. It records the error
@@ -61,7 +64,11 @@ func (app *application) editConflictResponse(w http.ResponseWriter, r *http.Requ
 }
 
 // rateLimitExceededResponse sends a 429 HTTP status code for too many requests.
-func (app *application) rateLimitExceededResponse(w http.ResponseWriter, r *http.Request) {
+func (app *application) rateLimitExceededResponse(w http.ResponseWriter, r *http.Request, retry time.Duration) {
 	message := "Rate limit exceeded"
+
+	// set the Retry-After header in seconds format, rounding up
+	w.Header().Set("Retry-After", strconv.Itoa(int(math.Ceil(retry.Seconds()))))
+
 	app.errorResponse(w, r, http.StatusTooManyRequests, message)
 }
