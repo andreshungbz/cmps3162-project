@@ -51,7 +51,7 @@ type application struct {
 
 func main() {
 	var cfg config
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
 	// FLAGS
 
