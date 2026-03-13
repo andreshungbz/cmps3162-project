@@ -38,8 +38,8 @@ func (app *application) serve() error {
 
 		app.logger.Info("Shutting down server", "signal", s.String())
 
-		// allow HTTP server to close any remaining connections with a 30-second grace period
-		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		// allow HTTP server to close any remaining connections with the configured grace period
+		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(app.config.grace)*time.Second)
 		defer cancel()
 		err := srv.Shutdown(ctx)
 		if err != nil {
