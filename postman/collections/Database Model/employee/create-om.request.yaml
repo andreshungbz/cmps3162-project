@@ -1,0 +1,25 @@
+$kind: http-request
+name: create-om
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/employees"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "name": "Dario Vega",
+      "gender": "M",
+      "street": "45 Oceanview Blvd",
+      "city": "Belize City",
+      "country": "Belize",
+      "hotel_id": 1,
+      "department": "Hotel Operations",
+      "manager_id": null,
+      "salary": 65000,
+      "ssn": "321-54-9876",
+      "work_email": "dario@grandoceanview.com",
+      "work_phone": "501-333-1010",
+      "password": "hotel_password",
+      "role": "operations_manager",
+      "hotel_owner": true
+    }
+order: 1232728294610024

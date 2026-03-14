@@ -1,0 +1,25 @@
+$kind: http-request
+name: create-hk
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/employees"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "name": "Fernando Castillo",
+      "gender": "M",
+      "street": "102 Palm St",
+      "city": "San Pedro",
+      "country": "Belize",
+      "hotel_id": 1,
+      "department": "Housekeeping & Maintenance",
+      "manager_id": 2,
+      "salary": 37000,
+      "ssn": "555-88-9999",
+      "work_email": "fernando@grandoceanview.com",
+      "work_phone": "501-555-1030",
+      "password": "hotel_password",
+      "role": "housekeeper",
+      "shift": "night"
+    }
+order: 4429735677057802

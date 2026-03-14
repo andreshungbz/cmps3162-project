@@ -49,11 +49,11 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodDelete, "/v1/departments/:dept_name", app.deleteDepartmentHandler)
 
 	// employee routes
-	router.HandlerFunc(http.MethodGet, "/v1/employees/:id", app.showEmployeeHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/employees/:email", app.showEmployeeHandler)
 	router.HandlerFunc(http.MethodGet, "/v1/employees", app.listEmployeesHandler)
 	router.HandlerFunc(http.MethodPost, "/v1/employees", app.createEmployeeHandler)
-	router.HandlerFunc(http.MethodPut, "/v1/employees/:id", app.updateEmployeeHandler)
-	router.HandlerFunc(http.MethodPatch, "/v1/employees/:id", app.updateEmployeeHandler)
+	router.HandlerFunc(http.MethodPut, "/v1/employees/:email", app.updateEmployeeHandler)
+	router.HandlerFunc(http.MethodPatch, "/v1/employees/:email", app.updateEmployeeHandler)
 	router.HandlerFunc(http.MethodDelete, "/v1/employees/:id", app.deleteEmployeeHandler)
 
 	// room routes

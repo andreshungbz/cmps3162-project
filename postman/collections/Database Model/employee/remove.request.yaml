@@ -1,0 +1,5 @@
+$kind: http-request
+name: remove
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/employees/3"
+method: DELETE
+order: 4488996590251257

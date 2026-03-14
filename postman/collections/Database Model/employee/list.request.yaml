@@ -1,0 +1,11 @@
+$kind: http-request
+name: list
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/employees?role=operati\
+  ons_manager&page_size=&page=&sort=-name"
+method: GET
+queryParams:
+  role: operations_manager
+  page_size: ""
+  page: ""
+  sort: -name
+order: 1773512692029

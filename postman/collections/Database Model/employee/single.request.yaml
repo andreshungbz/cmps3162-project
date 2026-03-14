@@ -1,0 +1,6 @@
+$kind: http-request
+name: single
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/employees/clara@grando\
+  ceanview.com"
+method: GET
+order: 337202865880

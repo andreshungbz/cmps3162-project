@@ -1,0 +1,28 @@
+$kind: http-request
+name: update
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/employees/clara@grando\
+  ceanview.com"
+method: PUT
+body:
+  type: json
+  content: |-
+    {
+        "name": "Clara Mendoza Smith",
+        "gender": "F",
+        "street": "120 Sea Rd",
+        "city": "San Pedro",
+        "country": "Belize",
+        "hotel_id": 1,
+        "department": "Housekeeping & Maintenance",
+        "manager_id": 1,
+        "salary": 35000,
+        "ssn": "555-66-7777",
+        "work_email": "clara@grandoceanview.com",
+        "work_phone": "501-111-1003",
+        "password": "hotel_password",
+        "employed": true,
+        "activated": false,
+        "role": "housekeeper",
+        "shift": "day"
+    }
+order: 4430898333380764

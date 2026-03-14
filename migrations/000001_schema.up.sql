@@ -65,7 +65,8 @@ CREATE TABLE IF NOT EXISTS employee (
     work_email CITEXT UNIQUE NOT NULL,
     work_phone TEXT UNIQUE NOT NULL,
     password_hash BYTEA NOT NULL,
-    employed BOOLEAN NOT NULL DEFAULT TRUE
+    employed BOOLEAN NOT NULL DEFAULT TRUE,
+    activated BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS operations_manager (
@@ -142,7 +143,7 @@ CREATE TABLE IF NOT EXISTS housekeeping_task (
     id BIGSERIAL PRIMARY KEY,
     hotel_id BIGINT NOT NULL,
     room_number INT NOT NULL,
-    housekeeper_id BIGINT REFERENCES housekeeper(id),
+    housekeeper_id BIGINT REFERENCES housekeeper(id) ON DELETE CASCADE,
     task_type housekeeping_task_type NOT NULL,
     created_at TIMESTAMP(0) WITH TIME ZONE NOT NULL DEFAULT NOW(),
     modified_at TIMESTAMP(0) WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -156,7 +157,7 @@ CREATE TABLE IF NOT EXISTS maintenance_report (
     id BIGSERIAL PRIMARY KEY,
     hotel_id BIGINT NOT NULL,
     room_number INT NOT NULL,
-    housekeeper_id BIGINT NOT NULL REFERENCES housekeeper(id),
+    housekeeper_id BIGINT NOT NULL REFERENCES housekeeper(id) ON DELETE CASCADE,
     description TEXT NOT NULL,
     created_at TIMESTAMP(0) WITH TIME ZONE NOT NULL DEFAULT NOW(),
     modified_at TIMESTAMP(0) WITH TIME ZONE NOT NULL DEFAULT NOW(),
