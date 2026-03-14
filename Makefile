@@ -129,6 +129,25 @@ test/rate-limiting-loop:
 	for i in {1..40}; do curl -i http://localhost:4000/v1/healthcheck; done
 
 # ==================================================================================== #
+# CORS Middleware
+# ==================================================================================== #
+
+# 1) Simple CORS Example Server
+.PHONY: test/cors/simple
+test/cors/simple:
+	go run ./cmd/examples/cors/simple
+
+# 2) Preflight Request CORS Example Server
+.PHONY: test/cors/preflight
+test/cors/preflight:
+	go run ./cmd/examples/cors/preflight
+
+# Test: start server with configured CORS trusted origins
+.PHONY: test/cors/server-with-trusted-origins
+test/cors/server-with-trusted-origins:
+	go run ./cmd/api -db-dsn=${HOTEL_DB_DSN} -cors-trusted-origins="http://localhost:9000"
+
+# ==================================================================================== #
 # Guest Model
 # ==================================================================================== #
 
