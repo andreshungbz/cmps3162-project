@@ -125,7 +125,7 @@ func (app *application) enableCORS(next http.Handler) http.Handler {
 						w.Header().Set("Access-Control-Allow-Methods", "OPTIONS, PUT, PATCH, DELETE")
 						w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
 
-						// write 200 instead of 204 for browser compatibility
+						// write 200 instead of 204 No Content for browser compatibility
 						w.WriteHeader(http.StatusOK)
 						return
 					}
