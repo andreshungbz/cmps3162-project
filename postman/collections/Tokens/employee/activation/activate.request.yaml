@@ -1,0 +1,11 @@
+$kind: http-request
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/activated/employees"
+method: PUT
+body:
+  type: json
+  content: |-
+    {
+        "token": ""
+    }
+examples: .resources/activate.resources/examples
+order: 2034173900700956

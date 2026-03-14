@@ -164,6 +164,86 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- ====================================================================================
+-- READ FUNCTION fn_get_employee_for_token returns employee and person data for a
+-- valid token hash and scope.
+-- ====================================================================================
+
+CREATE OR REPLACE FUNCTION fn_get_employee_for_token(
+    p_token_hash BYTEA,
+    p_scope TEXT
+)
+RETURNS TABLE (
+    -- person attributes
+    name TEXT,
+    gender TEXT,
+    street TEXT,
+    city TEXT,
+    country TEXT,
+    created_at TIMESTAMP(0) WITH TIME ZONE,
+    modified_at TIMESTAMP(0) WITH TIME ZONE,
+    -- employee attributes
+    id BIGINT,
+    hotel_id BIGINT,
+    department TEXT,
+    manager_id BIGINT,
+    salary NUMERIC,
+    ssn TEXT,
+    work_email CITEXT,
+    work_phone TEXT,
+    password_hash BYTEA,
+    employed BOOLEAN,
+    activated BOOLEAN,
+    -- role-specific attributes
+    role TEXT,
+    hotel_owner BOOLEAN,
+    shift shift_type
+)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        -- person attributes
+        p.name,
+        p.gender,
+        p.street,
+        p.city,
+        p.country,
+        p.created_at,
+        p.modified_at,
+        -- employee attributes
+        e.id,
+        e.hotel_id,
+        e.department,
+        e.manager_id,
+        e.salary,
+        e.ssn,
+        e.work_email,
+        e.work_phone,
+        e.password_hash,
+        e.employed,
+        e.activated,
+        -- role attributes
+        CASE
+            WHEN om.id IS NOT NULL THEN 'operations_manager'
+            WHEN fd.id IS NOT NULL THEN 'front_desk'
+            WHEN hk.id IS NOT NULL THEN 'housekeeper'
+        END AS role,
+        om.hotel_owner,
+        COALESCE(fd.shift, hk.shift) AS shift
+    FROM token t
+    JOIN employee e ON e.id = t.person_id
+    JOIN person p ON p.id = e.id
+    LEFT JOIN operations_manager om ON om.id = e.id
+    LEFT JOIN front_desk fd ON fd.id = e.id
+    LEFT JOIN housekeeper hk ON hk.id = e.id
+    WHERE
+        t.hash = p_token_hash
+        AND t.scope = p_scope
+        AND t.expiry > NOW();
+END;
+$$ LANGUAGE plpgsql;
+
+-- ====================================================================================
 -- READ FUNCTION fn_get_employees returns employee records with optional role filter.
 -- ====================================================================================
 

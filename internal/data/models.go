@@ -22,6 +22,8 @@ type Models struct {
 	MaintenanceReport MaintenanceReportModel
 	Registration      RegistrationModel
 	Reservation       ReservationModel
+	Tokens            TokenModel
+	Permissions       PermissionModel
 }
 
 // NewModels returns all Models configured with the database handler.
@@ -37,5 +39,7 @@ func NewModels(db *sql.DB) Models {
 		MaintenanceReport: MaintenanceReportModel{DB: db},
 		Registration:      RegistrationModel{DB: db},
 		Reservation:       ReservationModel{DB: db},
+		Tokens:            TokenModel{DB: db},
+		Permissions:       PermissionModel{DB: db},
 	}
 }

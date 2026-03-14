@@ -1,0 +1,17 @@
+$kind: http-example
+request:
+  url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/tokens/activation"
+  method: POST
+  body:
+    type: json
+    content: |-
+      {
+          "work_email": "angus@grandoceanview.com"
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  body:
+    type: json
+    content: ""
+order: 1773520409309

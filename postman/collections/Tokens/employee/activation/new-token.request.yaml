@@ -1,0 +1,12 @@
+$kind: http-request
+name: new-token
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/tokens/activation"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "work_email": "bea@grandoceanview.com"
+    }
+examples: .resources/new-token.resources/examples
+order: 1773522999565

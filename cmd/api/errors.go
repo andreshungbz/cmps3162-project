@@ -72,3 +72,37 @@ func (app *application) rateLimitExceededResponse(w http.ResponseWriter, r *http
 
 	app.errorResponse(w, r, http.StatusTooManyRequests, message)
 }
+
+// invalidCredentialsResponse sends a 401 HTTP status code for unauthorized.
+func (app *application) invalidCredentialsResponse(w http.ResponseWriter, r *http.Request) {
+	message := "invalid authentication credentials"
+	app.errorResponse(w, r, http.StatusUnauthorized, message)
+}
+
+// invalidAuthenticationTokenResponse sends a 401 HTTP status code for unauthorized.
+func (app *application) invalidAuthenticationTokenResponse(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Www-Authenticate", "Bearer")
+
+	message := "invalid or missing authentication token"
+	app.errorResponse(w, r, http.StatusUnauthorized, message)
+}
+
+// authenticationRequiredResponse sends a 401 HTTP status code for unauthorized.
+func (app *application) authenticationRequiredResponse(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Www-Authenticate", "Bearer")
+
+	message := "you must be authenticated to access this resource"
+	app.errorResponse(w, r, http.StatusUnauthorized, message)
+}
+
+// inactiveAccountResponse sends a 403 HTTP status code for forbidden.
+func (app *application) inactiveAccountResponse(w http.ResponseWriter, r *http.Request) {
+	message := "your employee account must be activated to access this resource"
+	app.errorResponse(w, r, http.StatusForbidden, message)
+}
+
+// notPermittedResponse sends a 403 HTTP status code for forbidden.
+func (app *application) notPermittedResponse(w http.ResponseWriter, r *http.Request) {
+	message := "your employee account doesn't have the necessary permissions to access this resource"
+	app.errorResponse(w, r, http.StatusForbidden, message)
+}

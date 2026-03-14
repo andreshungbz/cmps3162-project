@@ -1,0 +1,12 @@
+$kind: http-request
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/tokens/authentication"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "work_email": "",
+        "password": ""
+    }
+examples: .resources/new-token.resources/examples
+order: 1773523060971

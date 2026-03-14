@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"crypto/sha256"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -17,6 +18,9 @@ var (
 	ErrDuplicateEmail = errors.New("duplicate email")
 	ErrDuplicatePhone = errors.New("duplicate phone")
 )
+
+// AnonymousEmployee represents an unauthenticated employee.
+var AnonymousEmployee = &Employee{}
 
 // Employee maps the employee entity (subtype of person).
 type Employee struct {
@@ -44,6 +48,11 @@ type Employee struct {
 	Role       string  `json:"role"`
 	HotelOwner *bool   `json:"hotel_owner,omitempty"`
 	Shift      *string `json:"shift,omitempty"`
+}
+
+// IsAnonymous checks if the given employee is anonymous.
+func (e *Employee) IsAnonymous() bool {
+	return e == AnonymousEmployee
 }
 
 // password holds the plaintext and hash of a password.
@@ -183,7 +192,7 @@ func (m EmployeeModel) Insert(e *Employee) error {
 	return nil
 }
 
-// Get retrieves a single employee record by work email.
+// GetByEmail retrieves a single employee record by work email.
 func (m EmployeeModel) GetByEmail(email string) (*Employee, error) {
 	query := `SELECT * FROM fn_get_employee_by_email($1)`
 	var employee Employee
@@ -221,7 +230,59 @@ func (m EmployeeModel) GetByEmail(email string) (*Employee, error) {
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrRecordNotFound
 		case strings.Contains(err.Error(), "[employee-not-found]"):
+			return nil, ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &employee, nil
+}
+
+// GetForToken retrieves the employee record who has the given token and scope.
+func (m EmployeeModel) GetForToken(tokenScope, tokenPlaintext string) (*Employee, error) {
+	// calculate token hash
+	tokenHash := sha256.Sum256([]byte(tokenPlaintext))
+
+	query := `SELECT * FROM fn_get_employee_for_token($1, $2)`
+	var employee Employee
+
+	args := []any{tokenHash[:], tokenScope}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := m.DB.QueryRowContext(ctx, query, args...).Scan(
+		// person attributes
+		&employee.Name,
+		&employee.Gender,
+		&employee.Street,
+		&employee.City,
+		&employee.Country,
+		&employee.CreatedAt,
+		&employee.ModifiedAt,
+		// employee attributes
+		&employee.ID,
+		&employee.HotelID,
+		&employee.Department,
+		&employee.ManagerID,
+		&employee.Salary,
+		&employee.SSN,
+		&employee.WorkEmail,
+		&employee.WorkPhone,
+		&employee.Password.hash,
+		&employee.Employed,
+		&employee.Activated,
+		// role-specific attributes
+		&employee.Role,
+		&employee.HotelOwner,
+		&employee.Shift,
+	)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
 			return nil, ErrRecordNotFound
 		default:
 			return nil, err

@@ -94,6 +94,12 @@ func (app *application) createEmployeeHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	// err = app.models.Permissions.AddForEmployee(employee.ID, "healthcheck:read")
+	// if err != nil {
+	// 	app.serverErrorResponse(w, r, err)
+	// 	return
+	// }
+
 	err = app.writeJSON(w, http.StatusCreated, envelope{"employee": employee}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
@@ -322,4 +328,67 @@ func (app *application) deleteEmployeeHandler(w http.ResponseWriter, r *http.Req
 	}
 
 	app.writeJSON(w, http.StatusOK, envelope{"message": "employee successfully deleted"}, nil)
+}
+
+// activateEmployeeHandler calls the necessary models to activate an employee.
+// Writes JSON of the updated employee record.
+func (app *application) activateEmployeeHandler(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		TokenPlaintext string `json:"token"`
+	}
+
+	err := app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	// validate token
+	v := validator.New()
+	if data.ValidateTokenPlaintext(v, input.TokenPlaintext); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	// get employee by token
+	employee, err := app.models.Employee.GetForToken(data.ScopeActivation, input.TokenPlaintext)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			v.AddError("token", "invalid or expired activation token")
+			app.failedValidationResponse(w, r, v.Errors)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+
+		return
+	}
+
+	// set activated to true
+	employee.Activated = true
+
+	// update employee record
+	err = app.models.Employee.Update(employee)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrEditConflict):
+			app.editConflictResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+
+		return
+	}
+
+	// delete all activation tokens the for the employee after successful activation
+	err = app.models.Tokens.DeleteAllForPerson(data.ScopeActivation, employee.ID)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"employee": employee}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }

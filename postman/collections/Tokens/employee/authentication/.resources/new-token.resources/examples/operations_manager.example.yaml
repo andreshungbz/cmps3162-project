@@ -1,0 +1,19 @@
+$kind: http-example
+request:
+  url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/tokens/authentication"
+  method: POST
+  body:
+    type: json
+    content: |-
+      {
+          "work_email": "angus@grandoceanview.com",
+          "password": "hotel_password"
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  body:
+    type: json
+    content: ""
+order: 1773528724357
+name: operations_manager

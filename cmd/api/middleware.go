@@ -2,6 +2,7 @@ package main
 
 import (
 	"compress/gzip"
+	"errors"
 	"expvar"
 	"fmt"
 	"net/http"
@@ -10,6 +11,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/andreshungbz/cmps3162-project/internal/data"
+	"github.com/andreshungbz/cmps3162-project/internal/validator"
 	"github.com/tomasen/realip"
 	"golang.org/x/time/rate"
 )
@@ -275,4 +278,113 @@ func (app *application) gzip(next http.Handler) http.Handler {
 		// use the gzipResponseWriter in the next handler
 		next.ServeHTTP(gzw, r)
 	})
+}
+
+// authenticate protects routes which require authentication.
+func (app *application) authenticate(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// indicate to caches that Authorization may vary
+		w.Header().Add("Vary", "Authorization")
+
+		// retrieve request Authorization header value
+		authorizationHeader := r.Header.Get("Authorization")
+		if authorizationHeader == "" { // if empty, set anonymous and call next handler
+			r = app.contextSetEmployee(r, data.AnonymousEmployee)
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		// split Authorization header and validate
+		headerParts := strings.Split(authorizationHeader, " ")
+		if len(headerParts) != 2 || headerParts[0] != "Bearer" {
+			app.invalidAuthenticationTokenResponse(w, r)
+			return
+		}
+
+		// get authentication token part
+		token := headerParts[1]
+
+		// validate authentication token
+		v := validator.New()
+		if data.ValidateTokenPlaintext(v, token); !v.Valid() {
+			app.invalidAuthenticationTokenResponse(w, r)
+			return
+		}
+
+		// retrieve associated employee
+		employee, err := app.models.Employee.GetForToken(data.ScopeAuthentication, token)
+		if err != nil {
+			switch {
+			case errors.Is(err, data.ErrRecordNotFound):
+				app.invalidAuthenticationTokenResponse(w, r)
+			default:
+				app.serverErrorResponse(w, r, err)
+			}
+			return
+		}
+
+		// set employee to the context
+		r = app.contextSetEmployee(r, employee)
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+// requireAuthenticatedEmployee checks to see if the employee in context exists (authenticated).
+func (app *application) requireAuthenticatedEmployee(next http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		employee := app.contextGetEmployee(r)
+		if employee.IsAnonymous() {
+			app.authenticationRequiredResponse(w, r)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+// requiredActivatedEmployee checks to see if the employee in context is both authenticated and activated.
+func (app *application) requireActivatedEmployee(next http.HandlerFunc) http.HandlerFunc {
+	fn := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		employee := app.contextGetEmployee(r)
+		if employee.IsAnonymous() {
+			app.authenticationRequiredResponse(w, r)
+			return
+		}
+
+		if !employee.Activated {
+			app.inactiveAccountResponse(w, r)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+
+	return app.requireAuthenticatedEmployee(fn)
+}
+
+// requirePermission checks to see if the employee in context is authenticated, activated,
+// and contains the appropriate permissions.
+func (app *application) requirePermission(code string, next http.HandlerFunc) http.HandlerFunc {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		// retrieve employee from context.
+		employee := app.contextGetEmployee(r)
+
+		// get employee's permissions
+		permissions, err := app.models.Permissions.GetAllForEmployee(employee.ID)
+		if err != nil {
+			app.serverErrorResponse(w, r, err)
+			return
+		}
+
+		// check if permissions include appropriate code
+		if !permissions.Include(code) {
+			app.notPermittedResponse(w, r)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	}
+
+	return app.requireActivatedEmployee(fn)
 }

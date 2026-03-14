@@ -55,6 +55,8 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPut, "/v1/employees/:email", app.updateEmployeeHandler)
 	router.HandlerFunc(http.MethodPatch, "/v1/employees/:email", app.updateEmployeeHandler)
 	router.HandlerFunc(http.MethodDelete, "/v1/employees/:id", app.deleteEmployeeHandler)
+	// activation token
+	router.HandlerFunc(http.MethodPut, "/v1/activated/employees", app.activateEmployeeHandler)
 
 	// room routes
 	router.HandlerFunc(http.MethodGet, "/v1/hotels/:id/rooms", app.listRoomsHandler)
@@ -73,20 +75,20 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodDelete, "/v1/room_types/:id", app.deleteRoomTypeHandler)
 
 	// housekeeping_task routes
-	router.HandlerFunc(http.MethodGet, "/v1/housekeeping_tasks/:taskID", app.showHousekeepingTaskHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/hotels/:id/rooms/:number/housekeeping_tasks", app.listHousekeepingTasksHandler)
-	router.HandlerFunc(http.MethodPost, "/v1/hotels/:id/rooms/:number/housekeeping_tasks", app.createHousekeepingTaskHandler)
-	router.HandlerFunc(http.MethodPut, "/v1/housekeeping_tasks/:taskID", app.updateHousekeepingTaskHandler)
-	router.HandlerFunc(http.MethodPatch, "/v1/housekeeping_tasks/:taskID", app.updateHousekeepingTaskHandler)
-	router.HandlerFunc(http.MethodDelete, "/v1/housekeeping_tasks/:taskID", app.deleteHousekeepingTaskHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/housekeeping_tasks/:taskID", app.requirePermission("housekeeping_task:read", app.showHousekeepingTaskHandler))
+	router.HandlerFunc(http.MethodGet, "/v1/hotels/:id/rooms/:number/housekeeping_tasks", app.requirePermission("housekeeping_task:read", app.listHousekeepingTasksHandler))
+	router.HandlerFunc(http.MethodPost, "/v1/hotels/:id/rooms/:number/housekeeping_tasks", app.requirePermission("housekeeping_task:write", app.createHousekeepingTaskHandler))
+	router.HandlerFunc(http.MethodPut, "/v1/housekeeping_tasks/:taskID", app.requirePermission("housekeeping_task:write", app.updateHousekeepingTaskHandler))
+	router.HandlerFunc(http.MethodPatch, "/v1/housekeeping_tasks/:taskID", app.requirePermission("housekeeping_task:write", app.updateHousekeepingTaskHandler))
+	router.HandlerFunc(http.MethodDelete, "/v1/housekeeping_tasks/:taskID", app.requirePermission("housekeeping_task:write", app.deleteHousekeepingTaskHandler))
 
 	// maintenance_report routes
-	router.HandlerFunc(http.MethodGet, "/v1/maintenance_reports/:reportID", app.showMaintenanceReportHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/hotels/:id/rooms/:number/maintenance_reports", app.listMaintenanceReportsHandler)
-	router.HandlerFunc(http.MethodPost, "/v1/hotels/:id/rooms/:number/maintenance_reports", app.createMaintenanceReportHandler)
-	router.HandlerFunc(http.MethodPut, "/v1/maintenance_reports/:reportID", app.updateMaintenanceReportHandler)
-	router.HandlerFunc(http.MethodPatch, "/v1/maintenance_reports/:reportID", app.updateMaintenanceReportHandler)
-	router.HandlerFunc(http.MethodDelete, "/v1/maintenance_reports/:reportID", app.deleteMaintenanceReportHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/maintenance_reports/:reportID", app.requirePermission("maintenance_report:read", app.showMaintenanceReportHandler))
+	router.HandlerFunc(http.MethodGet, "/v1/hotels/:id/rooms/:number/maintenance_reports", app.requirePermission("maintenance_report:read", app.listMaintenanceReportsHandler))
+	router.HandlerFunc(http.MethodPost, "/v1/hotels/:id/rooms/:number/maintenance_reports", app.requirePermission("maintenance_report:write", app.createMaintenanceReportHandler))
+	router.HandlerFunc(http.MethodPut, "/v1/maintenance_reports/:reportID", app.requirePermission("maintenance_report:write", app.updateMaintenanceReportHandler))
+	router.HandlerFunc(http.MethodPatch, "/v1/maintenance_reports/:reportID", app.requirePermission("maintenance_report:write", app.updateMaintenanceReportHandler))
+	router.HandlerFunc(http.MethodDelete, "/v1/maintenance_reports/:reportID", app.requirePermission("maintenance_report:write", app.deleteMaintenanceReportHandler))
 
 	// registration routes
 	router.HandlerFunc(http.MethodGet, "/v1/registrations/:reservationID/:hotelID/:roomNumber", app.showRegistrationHandler)
@@ -104,13 +106,19 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPatch, "/v1/reservations/:reservationID", app.updateReservationHandler)
 	router.HandlerFunc(http.MethodDelete, "/v1/reservations/:reservationID", app.deleteReservationHandler)
 
+	// token routes
+	router.HandlerFunc(http.MethodPost, "/v1/tokens/activation", app.createActivationTokenHandler)
+	router.HandlerFunc(http.MethodPost, "/v1/tokens/authentication", app.createAuthenticationTokenHandler)
+
 	// global middleware
 	return app.requestLogger( // first middleware
 		app.metrics(
 			app.recoverPanic(
 				app.enableCORS(
 					app.rateLimit(
-						app.gzip(router), // last middleware
+						app.authenticate(
+							app.gzip(router), // last middleware
+						),
 					),
 				),
 			),

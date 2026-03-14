@@ -1,0 +1,17 @@
+$kind: http-example
+request:
+  url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/activated/employees"
+  method: PUT
+  body:
+    type: json
+    content: |-
+      {
+          "token": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  body:
+    type: json
+    content: ""
+order: 2978248501863100
