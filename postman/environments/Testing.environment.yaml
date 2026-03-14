@@ -1,0 +1,11 @@
+name: Testing
+values:
+  - key: SERVER_ADDRESS
+    value: ''
+    enabled: true
+  - key: SERVER_PORT
+    value: ''
+    enabled: true
+  - key: API_VERSION
+    value: ''
+    enabled: true

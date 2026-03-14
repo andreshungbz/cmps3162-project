@@ -1,0 +1,7 @@
+$kind: http-request
+name: metrics
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/observability/metrics"
+method: GET
+settings:
+  disabledSystemHeaders: []
+order: 1118498080148398

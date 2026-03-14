@@ -1,8 +1,0 @@
-name: Development
-variables:
-  - name: SERVER_ADDRESS
-    value: http://localhost
-  - name: SERVER_PORT
-    value: "4000"
-  - name: API_VERSION
-    value: v1
