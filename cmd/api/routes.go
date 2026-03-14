@@ -104,5 +104,16 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPatch, "/v1/reservations/:reservationID", app.updateReservationHandler)
 	router.HandlerFunc(http.MethodDelete, "/v1/reservations/:reservationID", app.deleteReservationHandler)
 
-	return app.requestLogger(app.metrics(app.recoverPanic(app.enableCORS(app.rateLimit(router)))))
+	// global middleware
+	return app.requestLogger( // first middleware
+		app.metrics(
+			app.recoverPanic(
+				app.enableCORS(
+					app.rateLimit(
+						app.gzip(router), // last middleware
+					),
+				),
+			),
+		),
+	)
 }
