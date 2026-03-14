@@ -113,20 +113,19 @@ build/api:
 # Rate Limiting Middleware
 # ==================================================================================== #
 
-# 1) Server Configuration (Expected: Retry-After of 1)
-.PHONY: test/rate-limiting-server-1
-test/rate-limiting-server-1:
-	go run ./cmd/api -db-dsn=${HOTEL_DB_DSN} -limiter-rps=0.75 -limiter-burst=2
-
-# 2) Server Configuration (Expected: Retry-After of 2)
-.PHONY: test/rate-limiting-server-2
-test/rate-limiting-server-2:
-	go run ./cmd/api -db-dsn=${HOTEL_DB_DSN} -limiter-rps=0.5 -limiter-burst=2
+# Server configured with a low requests per second and burst
+.PHONY: test/rate-limiting-server
+test/rate-limiting-server:
+	go run ./cmd/api -db-dsn=${HOTEL_DB_DSN} -limiter-rps=0.1 -limiter-burst=2
 
 # Test: requests in quick succession on the healthcheck endpoint
 .PHONY: test/rate-limiting-loop
 test/rate-limiting-loop:
-	for i in {1..40}; do curl -i http://localhost:4000/v1/healthcheck; done
+	for i in {1..15}; do \
+		echo "${ECHO_PREFIX} [Rate-limiting Demo] [Request $$i]"; \
+		curl -i http://localhost:4000/v1/healthcheck; \
+		sleep 1; \
+	done
 
 # ==================================================================================== #
 # CORS Middleware
