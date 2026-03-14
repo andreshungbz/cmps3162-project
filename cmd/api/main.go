@@ -25,10 +25,10 @@ var (
 
 // config stores the API server configuration.
 type config struct {
-	port  int    // API server port
-	env   string // (development|staging|production)
-	grace int    // grace period in seconds for HTTP server shutdown
-	db    struct {
+	port    int    // API server port
+	env     string // (development|staging|production)
+	timeout int    // grace period in seconds for HTTP server shutdown
+	db      struct {
 		dsn string // data source name
 	}
 	limiter struct {
@@ -59,7 +59,7 @@ func main() {
 	// server flags
 	flag.IntVar(&cfg.port, "port", 4000, "API server port")
 	flag.StringVar(&cfg.env, "env", "development", "Environment (development|staging|production)")
-	flag.IntVar(&cfg.grace, "grace", 30, "Grace period in seconds for HTTP server shutdown")
+	flag.IntVar(&cfg.timeout, "timeout", 30, "Grace period in seconds for HTTP server shutdown")
 
 	// database flags
 	flag.StringVar(&cfg.db.dsn, "db-dsn", "", "PostgreSQL DSN")
