@@ -1,0 +1,15 @@
+$kind: http-request
+name: update
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/registrations/2/1/102"
+method: PUT
+body:
+  type: json
+  content: |-
+    {
+      "room_number": 202
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_FD_AUTH_TOKEN}}"
+order: 4490236803353718

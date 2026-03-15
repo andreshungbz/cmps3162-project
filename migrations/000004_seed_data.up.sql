@@ -39,7 +39,7 @@ INSERT INTO person (name, gender, street, city, country) VALUES
     ('Bea Sierra', 'F', '90 Cedar St', 'San Pedro', 'Belize');
 
 INSERT INTO employee (id, hotel_id, department, manager_id, salary, ssn, work_email, work_phone, password_hash, employed, activated)
-    SELECT id, 1, 'Guest Services & Front Desk', 1, 40000, '987-65-4321', 'bea@grandoceanview.com', '501-222-1002', crypt('hotel_password', gen_salt('bf', 12))::BYTEA, TRUE, FALSE
+    SELECT id, 1, 'Guest Services & Front Desk', 1, 40000, '987-65-4321', 'bea@grandoceanview.com', '501-222-1002', crypt('hotel_password', gen_salt('bf', 12))::BYTEA, TRUE, TRUE
     FROM person WHERE name='Bea Sierra';
 
 INSERT INTO front_desk (id, shift)

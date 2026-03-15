@@ -98,7 +98,6 @@ func (app *application) listRegistrationsHandler(w http.ResponseWriter, r *http.
 	input.Filters.Page = app.readInt(qs, "page", 1, v)
 	input.Filters.PageSize = app.readInt(qs, "page_size", 20, v)
 	input.Filters.Sort = app.readURLString(qs, "sort", "room_number")
-
 	input.Filters.SortSafelist = []string{
 		"hotel_id", "room_number",
 		"-hotel_id", "-room_number",

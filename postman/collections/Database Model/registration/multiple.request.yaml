@@ -1,0 +1,18 @@
+$kind: http-request
+name: multiple
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/registrations/2?page_s\
+  ize=&page=&sort="
+method: GET
+queryParams:
+  - key: page_size
+    value: ""
+  - key: page
+    value: ""
+  - key: sort
+    value: ""
+    description: "{hotel_id, room_number}"
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_FD_AUTH_TOKEN}}"
+order: 1752552096950845

@@ -83,14 +83,6 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPatch, "/v1/guests/:passport_number", app.updateGuestHandler)
 	router.HandlerFunc(http.MethodDelete, "/v1/guests/:passport_number", app.deleteGuestHandler)
 
-	// registration routes
-	router.HandlerFunc(http.MethodGet, "/v1/registrations/:reservationID/:hotelID/:roomNumber", app.showRegistrationHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/registrations/:reservationID", app.listRegistrationsHandler)
-	router.HandlerFunc(http.MethodPost, "/v1/registrations", app.createRegistrationHandler)
-	router.HandlerFunc(http.MethodPut, "/v1/registrations/:reservationID/:hotelID/:roomNumber", app.updateRegistrationHandler)
-	router.HandlerFunc(http.MethodPatch, "/v1/registrations/:reservationID/:hotelID/:roomNumber", app.updateRegistrationHandler)
-	router.HandlerFunc(http.MethodDelete, "/v1/registrations/:reservationID/:hotelID/:roomNumber", app.deleteRegistrationHandler)
-
 	// reservation routes
 	router.HandlerFunc(http.MethodGet, "/v1/reservations/:reservationID", app.showReservationHandler)
 	router.HandlerFunc(http.MethodGet, "/v1/reservations", app.listReservationsHandler)
@@ -98,6 +90,13 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPut, "/v1/reservations/:reservationID", app.updateReservationHandler)
 	router.HandlerFunc(http.MethodPatch, "/v1/reservations/:reservationID", app.updateReservationHandler)
 	router.HandlerFunc(http.MethodDelete, "/v1/reservations/:reservationID", app.deleteReservationHandler)
+
+	// registration routes
+	router.HandlerFunc(http.MethodGet, "/v1/registrations/:reservationID/:hotelID/:roomNumber", app.requirePermission("registration:read", app.showRegistrationHandler))
+	router.HandlerFunc(http.MethodGet, "/v1/registrations/:reservationID", app.requirePermission("registration:read", app.listRegistrationsHandler))
+	router.HandlerFunc(http.MethodPost, "/v1/registrations", app.requirePermission("registration:write", app.createRegistrationHandler))
+	router.HandlerFunc(http.MethodPut, "/v1/registrations/:reservationID/:hotelID/:roomNumber", app.requirePermission("registration:write", app.updateRegistrationHandler))
+	router.HandlerFunc(http.MethodDelete, "/v1/registrations/:reservationID/:hotelID/:roomNumber", app.requirePermission("registration:write", app.deleteRegistrationHandler))
 
 	// token routes
 	router.HandlerFunc(http.MethodPost, "/v1/tokens/activation", app.createActivationTokenHandler)

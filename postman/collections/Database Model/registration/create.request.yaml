@@ -1,0 +1,17 @@
+$kind: http-request
+name: create
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/registrations"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "reservation_id": 2,
+      "hotel_id": 1,
+      "room_number": 401
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_FD_AUTH_TOKEN}}"
+order: 4477159140892943
