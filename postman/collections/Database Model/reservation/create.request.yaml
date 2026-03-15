@@ -1,0 +1,21 @@
+$kind: http-request
+name: create
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/reservations"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "guest_id": 4,
+      "checkin_date": "2026-03-10",
+      "checkout_date": "2026-03-12",
+      "payment_method": "credit_card",
+      "source": "direct",
+      "hotel_id": 1,
+      "room_type_id": 1
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_FD_AUTH_TOKEN}}"
+order: 4061649029099091

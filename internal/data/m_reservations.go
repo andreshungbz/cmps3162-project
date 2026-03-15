@@ -12,17 +12,19 @@ import (
 
 // Reservation maps the reservation entity and includes its registrations.
 type Reservation struct {
-	ID            int64           `json:"id"`
-	GuestID       int64           `json:"guest_id"`
-	CheckinDate   string          `json:"checkin_date"`
-	CheckoutDate  string          `json:"checkout_date"`
-	PaymentAmount float64         `json:"payment_amount"`
-	PaymentMethod string          `json:"payment_method"`
-	Source        string          `json:"source"`
-	Completed     bool            `json:"completed"`
-	Canceled      bool            `json:"canceled"`
-	CreatedAt     string          `json:"created_at"`
-	ModifiedAt    string          `json:"modified_at"`
+	// reservation attributes
+	ID            int64   `json:"id"`
+	GuestID       int64   `json:"guest_id"`
+	CheckinDate   string  `json:"checkin_date"`
+	CheckoutDate  string  `json:"checkout_date"`
+	PaymentAmount float64 `json:"payment_amount"`
+	PaymentMethod string  `json:"payment_method"`
+	Source        string  `json:"source"`
+	Completed     bool    `json:"completed"`
+	Canceled      bool    `json:"canceled"`
+	CreatedAt     string  `json:"created_at"`
+	ModifiedAt    string  `json:"modified_at"`
+	// registrations
 	Registrations []*Registration `json:"registrations"`
 }
 
@@ -70,12 +72,7 @@ func (m ReservationModel) Insert(r *Reservation, roomTypeID int, hotelID int) (i
 
 // Get retrieves a single reservation along with its registrations.
 func (m ReservationModel) Get(id int64) (*Reservation, error) {
-	query := `
-		SELECT id, guest_id, checkin_date, checkout_date,
-		    payment_amount, payment_method, source,
-		    completed, canceled, created_at, modified_at
-		FROM reservation
-		WHERE id=$1`
+	query := `SELECT * FROM reservation WHERE id=$1`
 	var r Reservation
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -104,7 +101,7 @@ func (m ReservationModel) Get(id int64) (*Reservation, error) {
 		}
 	}
 
-	// Get registrations for this reservation
+	// get registrations
 	regModel := RegistrationModel{DB: m.DB}
 	regs, _, err := regModel.GetAll(
 		r.ID,
@@ -121,9 +118,7 @@ func (m ReservationModel) Get(id int64) (*Reservation, error) {
 // GetAll retrieves all reservations with optional pagination.
 func (m ReservationModel) GetAll(filters Filters) ([]*Reservation, Metadata, error) {
 	query := fmt.Sprintf(`
-		SELECT count(*) OVER(), id, guest_id, checkin_date, checkout_date,
-		    payment_amount, payment_method, source,
-		    completed, canceled, created_at, modified_at
+		SELECT count(*) OVER(), *
 		FROM reservation
 		ORDER BY %s %s
 		LIMIT $1 OFFSET $2`,
@@ -146,6 +141,7 @@ func (m ReservationModel) GetAll(filters Filters) ([]*Reservation, Metadata, err
 		var r Reservation
 		err := rows.Scan(
 			&totalRecords,
+			// reservation attributes
 			&r.ID,
 			&r.GuestID,
 			&r.CheckinDate,
@@ -162,7 +158,7 @@ func (m ReservationModel) GetAll(filters Filters) ([]*Reservation, Metadata, err
 			return nil, Metadata{}, err
 		}
 
-		// attach registrations
+		// get registrations
 		regModel := RegistrationModel{DB: m.DB}
 		regs, _, err := regModel.GetAll(
 			r.ID,
@@ -189,8 +185,7 @@ func (m ReservationModel) Update(r *Reservation) error {
 	query := `
 		UPDATE reservation
 		SET checkin_date=$1, checkout_date=$2, payment_amount=$3,
-		    payment_method=$4, source=$5, completed=$6, canceled=$7,
-		    modified_at=NOW()
+		    payment_method=$4, source=$5, completed=$6, canceled=$7
 		WHERE id=$8`
 
 	args := []any{

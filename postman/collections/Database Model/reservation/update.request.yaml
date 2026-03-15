@@ -1,0 +1,21 @@
+$kind: http-request
+name: update
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/reservations/2"
+method: PUT
+body:
+  type: json
+  content: |-
+    {
+        "checkin_date": "2026-06-02T00:00:00Z",
+        "checkout_date": "2026-06-06T00:00:00Z",
+        "payment_amount": 500,
+        "payment_method": "credit_card",
+        "source": "Booking.com",
+        "completed": true,
+        "canceled": false
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_FD_AUTH_TOKEN}}"
+order: 4502922668734412

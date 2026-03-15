@@ -8,10 +8,6 @@ import (
 	"github.com/andreshungbz/cmps3162-project/internal/validator"
 )
 
-// ====================================================================================
-// Handlers for Reservation Entity
-// ====================================================================================
-
 // createReservationHandler creates a reservation and optionally registers a room.
 func (app *application) createReservationHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
@@ -20,8 +16,8 @@ func (app *application) createReservationHandler(w http.ResponseWriter, r *http.
 		CheckoutDate  string `json:"checkout_date"`
 		PaymentMethod string `json:"payment_method"`
 		Source        string `json:"source"`
-		RoomTypeID    int    `json:"room_type_id"`
 		HotelID       int    `json:"hotel_id"`
+		RoomTypeID    int    `json:"room_type_id"`
 	}
 
 	err := app.readJSON(w, r, &input)
@@ -92,8 +88,11 @@ func (app *application) listReservationsHandler(w http.ResponseWriter, r *http.R
 	input.Filters.Page = app.readInt(qs, "page", 1, v)
 	input.Filters.PageSize = app.readInt(qs, "page_size", 20, v)
 	input.Filters.Sort = app.readURLString(qs, "sort", "id")
-
-	input.Filters.SortSafelist = []string{"id", "-id", "guest_id", "-guest_id"}
+	input.Filters.SortSafelist = []string{
+		"id", "-id",
+		"checkin_date", "-checkin_date",
+		"checkout_date", "checkout_date",
+	}
 
 	if data.ValidateFilters(v, input.Filters); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)

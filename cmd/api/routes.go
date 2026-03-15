@@ -83,12 +83,11 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodDelete, "/v1/guests/:passport_number", app.requirePermission("guest:write", app.deleteGuestHandler))
 
 	// reservation routes
-	router.HandlerFunc(http.MethodGet, "/v1/reservations/:reservationID", app.showReservationHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/reservations", app.listReservationsHandler)
-	router.HandlerFunc(http.MethodPost, "/v1/reservations", app.createReservationHandler)
-	router.HandlerFunc(http.MethodPut, "/v1/reservations/:reservationID", app.updateReservationHandler)
-	router.HandlerFunc(http.MethodPatch, "/v1/reservations/:reservationID", app.updateReservationHandler)
-	router.HandlerFunc(http.MethodDelete, "/v1/reservations/:reservationID", app.deleteReservationHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/reservations/:reservationID", app.requirePermission("reservation:read", app.showReservationHandler))
+	router.HandlerFunc(http.MethodGet, "/v1/reservations", app.requirePermission("reservation:read", app.listReservationsHandler))
+	router.HandlerFunc(http.MethodPost, "/v1/reservations", app.requirePermission("reservation:write", app.createReservationHandler))
+	router.HandlerFunc(http.MethodPut, "/v1/reservations/:reservationID", app.requirePermission("reservation:write", app.updateReservationHandler))
+	router.HandlerFunc(http.MethodDelete, "/v1/reservations/:reservationID", app.requirePermission("reservation:write", app.deleteReservationHandler))
 
 	// registration routes
 	router.HandlerFunc(http.MethodGet, "/v1/registrations/:reservationID/:hotelID/:roomNumber", app.requirePermission("registration:read", app.showRegistrationHandler))

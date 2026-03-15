@@ -34,8 +34,8 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION fn_find_available_room(
     p_hotel_id INT,
     p_room_type_id INT,
-    p_checkin DATE,
-    p_checkout DATE
+    p_checkin_date DATE,
+    p_checkout_date DATE
 )
 RETURNS TABLE (
     hotel_id INT,
@@ -56,8 +56,8 @@ BEGIN
             WHERE reg.hotel_id = r.hotel_id
               AND reg.room_number = r.number
               AND res.canceled = FALSE -- ignore canceled reservations
-              AND res.checkout_date > p_checkin -- overlapping check
-              AND res.checkin_date < p_checkout
+              AND res.checkout_date > p_checkin_date -- overlapping check
+              AND res.checkin_date < p_checkout_date
         )
     ORDER BY r.number
     FOR UPDATE SKIP LOCKED  -- safe for concurrent allocations
@@ -74,8 +74,8 @@ CREATE OR REPLACE FUNCTION fn_calculate_payment(
     -- room attribute
     p_room_type_id INT,
     -- reservation attributes
-    p_checkin DATE,
-    p_checkout DATE
+    p_checkin_date DATE,
+    p_checkout_date DATE
 )
 RETURNS NUMERIC AS $$
 DECLARE
@@ -94,7 +94,7 @@ BEGIN
 
     -- calculate days
     -- checkout_date > checkin_date business rule in schema ensures this is at least 1
-    v_days := p_checkout - p_checkin;
+    v_days := p_checkout_date - p_checkin_date;
     RETURN v_base_rate * v_days;
 END;
 $$ LANGUAGE plpgsql;
@@ -106,8 +106,8 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION fn_create_reservation(
     -- reservation attributes
     p_guest_id BIGINT,
-    p_checkin DATE,
-    p_checkout DATE,
+    p_checkin_date DATE,
+    p_checkout_date DATE,
     p_payment_method payment_method,
     p_source reservation_source,
     -- room attribute
@@ -120,7 +120,7 @@ DECLARE
     v_payment_amount NUMERIC(12, 2);
 BEGIN
     -- calculate total payment
-    v_payment_amount := fn_calculate_payment(p_room_type_id, p_checkin, p_checkout);
+    v_payment_amount := fn_calculate_payment(p_room_type_id, p_checkin_date, p_checkout_date);
 
     INSERT INTO reservation (
         guest_id,
@@ -132,8 +132,8 @@ BEGIN
     )
     VALUES (
         p_guest_id,
-        p_checkin,
-        p_checkout,
+        p_checkin_date,
+        p_checkout_date,
         v_payment_amount,
         p_payment_method,
         p_source
@@ -153,8 +153,8 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION fn_create_reservation_workflow(
     -- reservation attributes
     p_guest_id BIGINT,
-    p_checkin DATE,
-    p_checkout DATE,
+    p_checkin_date DATE,
+    p_checkout_date DATE,
     p_payment_method payment_method,
     p_source reservation_source,
     -- registration attribute
@@ -174,8 +174,8 @@ BEGIN
     IF p_reservation_id IS NULL THEN
         v_reservation_id := fn_create_reservation(
             p_guest_id,
-            p_checkin,
-            p_checkout,
+            p_checkin_date,
+            p_checkout_date,
             p_payment_method,
             p_source,
             p_room_type_id
@@ -199,8 +199,8 @@ BEGIN
     FROM fn_find_available_room(
         p_hotel_id,
         p_room_type_id,
-        p_checkin,
-        p_checkout
+        p_checkin_date,
+        p_checkout_date
     );
 
     -- return an error if there are no available rooms

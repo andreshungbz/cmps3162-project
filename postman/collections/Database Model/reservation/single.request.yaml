@@ -1,0 +1,9 @@
+$kind: http-request
+name: single
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/reservations/2"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_FD_AUTH_TOKEN}}"
+order: 1773599795582
