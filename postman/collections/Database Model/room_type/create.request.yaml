@@ -1,0 +1,19 @@
+$kind: http-request
+name: create
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/room_types"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "title": "Ocean View Suite",
+      "base_rate": 250.0,
+      "max_occupancy": 4,
+      "bed_count": 2,
+      "has_balcony": true
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
+order: 1852722122960840

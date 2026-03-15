@@ -248,50 +248,6 @@ test/api/rooms/delete:
 	curl -i -X DELETE http://localhost:4000/v1/hotels/1/rooms/501
 
 # ==================================================================================== #
-# RoomType Model
-# ==================================================================================== #
-
-# GET
-.PHONY: test/api/room_types/get
-test/api/room_types/get:
-	curl -i http://localhost:4000/v1/room_types/1
-
-# GET ALL
-.PHONY: test/api/room_types/get-all
-test/api/room_types/get-all:
-	curl -i http://localhost:4000/v1/room_types
-
-# GET ALL (filtered by title)
-.PHONY: test/api/room_types/get-all-title
-test/api/room_types/get-all-title:
-	curl -i http://localhost:4000/v1/room_types?title=suite
-
-# GET ALL (filters, pagination and sorting)
-.PHONY: test/api/room_types/get-all-filters
-test/api/room_types/get-all-filters:
-	curl -i "http://localhost:4000/v1/room_types?page=1&page_size=3&sort=-base_rate"
-
-# POST
-.PHONY: test/api/room_types/post
-test/api/room_types/post:
-	curl -i -X POST http://localhost:4000/v1/room_types -d @test/room_type/01-post.json
-
-# PUT
-.PHONY: test/api/room_types/put
-test/api/room_types/put:
-	curl -i -X PUT http://localhost:4000/v1/room_types/4 -d @test/room_type/02-put.json
-
-# PATCH
-.PHONY: test/api/room_types/patch
-test/api/room_types/patch:
-	curl -i -X PATCH http://localhost:4000/v1/room_types/4 -d @test/room_type/03-patch.json
-
-# DELETE
-.PHONY: test/api/room_types/delete
-test/api/room_types/delete:
-	curl -i -X DELETE http://localhost:4000/v1/room_types/4
-
-# ==================================================================================== #
 # HousekeepingTask Model
 # ==================================================================================== #
 

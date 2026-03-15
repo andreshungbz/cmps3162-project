@@ -1,0 +1,20 @@
+$kind: http-request
+name: multiple
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/room_types/?title=&pag\
+  e_size=&page=&sort="
+method: GET
+queryParams:
+  - key: title
+    value: ""
+  - key: page_size
+    value: ""
+  - key: page
+    value: ""
+  - key: sort
+    value: ""
+    description: "{id, title, base_rate}"
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
+order: 1459430464571654

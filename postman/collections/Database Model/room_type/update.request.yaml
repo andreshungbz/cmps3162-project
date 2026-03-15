@@ -1,0 +1,19 @@
+$kind: http-request
+name: update
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/room_types/1"
+method: PUT
+body:
+  type: json
+  content: |-
+    {
+        "title": "Single",
+        "base_rate": 125,
+        "max_occupancy": 1,
+        "bed_count": 1,
+        "has_balcony": false
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
+order: 3379542762391235
