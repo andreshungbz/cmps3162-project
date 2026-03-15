@@ -33,12 +33,11 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodDelete, "/v1/guests/:passport_number", app.deleteGuestHandler)
 
 	// hotel routes
-	router.HandlerFunc(http.MethodGet, "/v1/hotels/:id", app.showHotelHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/hotels", app.listHotelsHandler)
-	router.HandlerFunc(http.MethodPost, "/v1/hotels", app.createHotelHandler)
-	router.HandlerFunc(http.MethodPut, "/v1/hotels/:id", app.updateHotelHandler)
-	router.HandlerFunc(http.MethodPatch, "/v1/hotels/:id", app.updateHotelHandler)
-	router.HandlerFunc(http.MethodDelete, "/v1/hotels/:id", app.deleteHotelHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/hotels/:id", app.requirePermission("operations_manager", app.showHotelHandler))
+	router.HandlerFunc(http.MethodGet, "/v1/hotels", app.requirePermission("operations_manager", app.listHotelsHandler))
+	router.HandlerFunc(http.MethodPost, "/v1/hotels", app.requirePermission("operations_manager", app.createHotelHandler))
+	router.HandlerFunc(http.MethodPut, "/v1/hotels/:id", app.requirePermission("operations_manager", app.updateHotelHandler))
+	router.HandlerFunc(http.MethodDelete, "/v1/hotels/:id", app.requirePermission("operations_manager", app.deleteHotelHandler))
 
 	// department routes
 	router.HandlerFunc(http.MethodGet, "/v1/departments/:dept_name", app.showDepartmentHandler)

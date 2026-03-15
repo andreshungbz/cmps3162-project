@@ -209,50 +209,6 @@ test/api/guests/delete:
 	curl -i -X DELETE http://localhost:4000/v1/guests/P0000000
 
 # ==================================================================================== #
-# Hotel Model
-# ==================================================================================== #
-
-# GET
-.PHONY: test/api/hotels/get
-test/api/hotels/get:
-	curl -i http://localhost:4000/v1/hotels/1
-
-# GET ALL
-.PHONY: test/api/hotels/get-all
-test/api/hotels/get-all:
-	curl -i http://localhost:4000/v1/hotels
-
-# GET ALL (filtered by name)
-.PHONY: test/api/hotels/get-all-name
-test/api/hotels/get-all-name:
-	curl -i http://localhost:4000/v1/hotels?name=grand
-
-# GET ALL (filters, pagination and sorting)
-.PHONY: test/api/hotels/get-all-filters
-test/api/hotels/get-all-filters:
-	curl -i "http://localhost:4000/v1/hotels?city=belize&page=1&page_size=3&sort=-name"
-
-# POST
-.PHONY: test/api/hotels/post
-test/api/hotels/post:
-	curl -i -X POST http://localhost:4000/v1/hotels -d @test/hotel/01-post.json
-
-# PUT
-.PHONY: test/api/hotels/put
-test/api/hotels/put:
-	curl -i -X PUT http://localhost:4000/v1/hotels/3 -d @test/hotel/02-put.json
-
-# PATCH
-.PHONY: test/api/hotels/patch
-test/api/hotels/patch:
-	curl -i -X PATCH http://localhost:4000/v1/hotels/3 -d @test/hotel/03-patch.json
-
-# DELETE
-.PHONY: test/api/hotels/delete
-test/api/hotels/delete:
-	curl -i -X DELETE http://localhost:4000/v1/hotels/3
-
-# ==================================================================================== #
 # Department Model
 # ==================================================================================== #
 

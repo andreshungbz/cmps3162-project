@@ -1,0 +1,9 @@
+$kind: http-request
+name: remove
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/hotels/2"
+method: DELETE
+auth:
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
+  type: bearer
+order: 4502019066010542

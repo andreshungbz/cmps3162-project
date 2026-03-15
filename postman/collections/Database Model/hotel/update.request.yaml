@@ -1,0 +1,20 @@
+$kind: http-request
+name: update
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/hotels/1"
+method: PUT
+body:
+  type: json
+  content: |-
+    {
+        "name": "Grand Ocean View",
+        "street": "1234 Tailwind St",
+        "city": "San Pedro",
+        "state": "Belize",
+        "country": "Belize",
+        "phone": "501-343-1213"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
+order: 4471072039343378

@@ -1,0 +1,20 @@
+$kind: http-request
+name: create
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/hotels"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "name": "Test Grand Hotel",
+      "street": "10 Coastal Road",
+      "city": "Belize City",
+      "state": "Belize District",
+      "country": "Belize",
+      "phone": "501-222-1000"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
+order: 4447303047542447
