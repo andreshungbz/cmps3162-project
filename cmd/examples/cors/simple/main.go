@@ -1,24 +1,26 @@
 package main
 
 import (
-	"embed"
 	"flag"
 	"html/template"
 	"log"
 	"net/http"
-)
 
-//go:embed index.tmpl
-var tmplFS embed.FS
+	"github.com/andreshungbz/cmps3162-project/ui"
+)
 
 func main() {
 	addr := flag.String("addr", ":9000", "Server address")
 	flag.Parse()
 
 	// parse template from embedded filesystem
-	tmpl := template.Must(template.ParseFS(tmplFS, "index.tmpl"))
+	tmpl := template.Must(template.ParseFS(
+		ui.FS,
+		"html/examples/cors/simple/index.tmpl",
+	))
 
 	mux := http.NewServeMux()
+
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		err := tmpl.Execute(w, nil)
 		if err != nil {
