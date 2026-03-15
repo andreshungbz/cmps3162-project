@@ -14,16 +14,14 @@ CREATE TABLE IF NOT EXISTS employee_permission (
 
 INSERT INTO permission(code)
 VALUES
-    ('housekeeping_task:read'),
-    ('housekeeping_task:write'),
-    ('maintenance_report:read'),
-    ('maintenance_report:write');
+    ('operations_manager'),
+    ('front_desk'),
+    ('housekeeper');
 
 INSERT INTO employee_permission(employee_id, permission_id)
 VALUES
     (1, 1),
+    (1, 2),
     (1, 3),
-    (3, 1),
-    (3, 2),
-    (3, 3),
-    (3, 4);
+    (2, 2),
+    (3, 3);
