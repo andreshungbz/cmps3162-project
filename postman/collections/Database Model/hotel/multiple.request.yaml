@@ -4,10 +4,15 @@ url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/hotels?name=&page_size\
   =&page=&sort="
 method: GET
 queryParams:
-  name: ""
-  page_size: ""
-  page: ""
-  sort: ""
+  - key: name
+    value: ""
+  - key: page_size
+    value: ""
+  - key: page
+    value: ""
+  - key: sort
+    value: ""
+    description: "{id, name, city}"
 auth:
   type: bearer
   credentials:
