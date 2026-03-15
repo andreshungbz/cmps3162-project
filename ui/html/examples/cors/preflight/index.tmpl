@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF=8" />
+  </head>
+  <body>
+    <h1>Hotel Room Booking & HouseKeeping Management</h1>
+    <h2>Preflight CORS Example</h2>
+    <p>
+      In this example, the script sends a POST HTTP request to the token
+      authentication endpoint, which as JSON body. The Content-Type of
+      <code>application/json</code> is not in the list of Content-Type values
+      which constitute a simple cross-origin request. As a result, the web
+      browser triggers a preflight request.
+    </p>
+    <div id="output"></div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        fetch('http://localhost:4000/v1/tokens/authentication', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            work_email: 'angus@grandoceanview.com',
+            password: 'hotel_password',
+          }),
+        }).then(
+          function (response) {
+            response.text().then(function (text) {
+              document.getElementById('output').innerHTML = text;
+            });
+          },
+          function (err) {
+            document.getElementById('output').innerHTML = err;
+          },
+        );
+      });
+    </script>
+  </body>
+</html>
