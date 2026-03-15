@@ -3,4 +3,8 @@ name: single
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/employees/clara@grando\
   ceanview.com"
 method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
 order: 337202865880

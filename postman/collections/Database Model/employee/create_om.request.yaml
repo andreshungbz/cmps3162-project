@@ -1,5 +1,5 @@
 $kind: http-request
-name: create-om
+name: create_om
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/employees"
 method: POST
 body:
@@ -22,4 +22,8 @@ body:
       "role": "operations_manager",
       "hotel_owner": true
     }
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
 order: 1232728294610024

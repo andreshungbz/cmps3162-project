@@ -1,5 +1,5 @@
 $kind: http-request
-name: create-fd
+name: create_fd
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/employees"
 method: POST
 body:
@@ -22,4 +22,8 @@ body:
       "role": "front_desk",
       "shift": "day"
     }
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
 order: 2888402002800745

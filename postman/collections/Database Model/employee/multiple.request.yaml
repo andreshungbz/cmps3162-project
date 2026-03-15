@@ -1,0 +1,21 @@
+$kind: http-request
+name: multiple
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/employees?role=&page_s\
+  ize=&page=&sort="
+method: GET
+queryParams:
+  - key: role
+    value: ""
+    description: "{operations_manager, front_desk, housekeeper}"
+  - key: page_size
+    value: ""
+  - key: page
+    value: ""
+  - key: sort
+    value: ""
+    description: "{id, name, department}"
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
+order: 1773512692029

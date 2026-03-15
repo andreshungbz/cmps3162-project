@@ -25,4 +25,8 @@ body:
         "role": "housekeeper",
         "shift": "day"
     }
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
 order: 4430898333380764

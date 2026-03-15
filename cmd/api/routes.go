@@ -47,12 +47,11 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodDelete, "/v1/departments/:dept_name", app.requirePermission("department:write", app.deleteDepartmentHandler))
 
 	// employee routes
-	router.HandlerFunc(http.MethodGet, "/v1/employees/:email", app.showEmployeeHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/employees", app.listEmployeesHandler)
-	router.HandlerFunc(http.MethodPost, "/v1/employees", app.createEmployeeHandler)
-	router.HandlerFunc(http.MethodPut, "/v1/employees/:email", app.updateEmployeeHandler)
-	router.HandlerFunc(http.MethodPatch, "/v1/employees/:email", app.updateEmployeeHandler)
-	router.HandlerFunc(http.MethodDelete, "/v1/employees/:id", app.deleteEmployeeHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/employees/:email", app.requirePermission("employee:read", app.showEmployeeHandler))
+	router.HandlerFunc(http.MethodGet, "/v1/employees", app.requirePermission("employee:read", app.listEmployeesHandler))
+	router.HandlerFunc(http.MethodPost, "/v1/employees", app.requirePermission("employee:write", app.createEmployeeHandler))
+	router.HandlerFunc(http.MethodPut, "/v1/employees/:email", app.requirePermission("employee:write", app.updateEmployeeHandler))
+	router.HandlerFunc(http.MethodDelete, "/v1/employees/:id", app.requirePermission("employee:write", app.deleteEmployeeHandler))
 	// activation token
 	router.HandlerFunc(http.MethodPut, "/v1/activated/employees", app.activateEmployeeHandler)
 

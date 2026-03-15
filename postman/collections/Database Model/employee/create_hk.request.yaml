@@ -1,5 +1,5 @@
 $kind: http-request
-name: create-hk
+name: create_hk
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/employees"
 method: POST
 body:
@@ -22,4 +22,8 @@ body:
       "role": "housekeeper",
       "shift": "night"
     }
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
 order: 4429735677057802
