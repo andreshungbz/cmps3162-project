@@ -1,0 +1,16 @@
+$kind: http-request
+name: update
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/departments/Hotel
+  Operations"
+method: PUT
+body:
+  type: json
+  content: |-
+    {
+      "budget": 650000.0
+    }
+auth:
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
+  type: bearer
+order: 3469488820017590

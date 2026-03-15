@@ -1,0 +1,16 @@
+$kind: http-request
+name: create
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/departments"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "dept_name": "Restaurant Operations",
+      "budget": 500000.0
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
+order: 3143135551005001

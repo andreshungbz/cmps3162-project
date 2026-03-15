@@ -40,12 +40,11 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodDelete, "/v1/hotels/:id", app.requirePermission("operations_manager", app.deleteHotelHandler))
 
 	// department routes
-	router.HandlerFunc(http.MethodGet, "/v1/departments/:dept_name", app.showDepartmentHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/departments", app.listDepartmentsHandler)
-	router.HandlerFunc(http.MethodPost, "/v1/departments", app.createDepartmentHandler)
-	router.HandlerFunc(http.MethodPut, "/v1/departments/:dept_name", app.updateDepartmentHandler)
-	router.HandlerFunc(http.MethodPatch, "/v1/departments/:dept_name", app.updateDepartmentHandler)
-	router.HandlerFunc(http.MethodDelete, "/v1/departments/:dept_name", app.deleteDepartmentHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/departments/:dept_name", app.requirePermission("operations_manager", app.showDepartmentHandler))
+	router.HandlerFunc(http.MethodGet, "/v1/departments", app.requirePermission("operations_manager", app.listDepartmentsHandler))
+	router.HandlerFunc(http.MethodPost, "/v1/departments", app.requirePermission("operations_manager", app.createDepartmentHandler))
+	router.HandlerFunc(http.MethodPut, "/v1/departments/:dept_name", app.requirePermission("operations_manager", app.updateDepartmentHandler))
+	router.HandlerFunc(http.MethodDelete, "/v1/departments/:dept_name", app.requirePermission("operations_manager", app.deleteDepartmentHandler))
 
 	// employee routes
 	router.HandlerFunc(http.MethodGet, "/v1/employees/:email", app.showEmployeeHandler)

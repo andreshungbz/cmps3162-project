@@ -1,0 +1,20 @@
+$kind: http-request
+name: multiple
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/departments?name=&page\
+  _size=&page=&sort="
+method: GET
+queryParams:
+  - key: name
+    value: ""
+  - key: page_size
+    value: ""
+  - key: page
+    value: ""
+  - key: sort
+    value: ""
+    description: "{dept_name, budget}"
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
+order: 2830342288053268

@@ -209,50 +209,6 @@ test/api/guests/delete:
 	curl -i -X DELETE http://localhost:4000/v1/guests/P0000000
 
 # ==================================================================================== #
-# Department Model
-# ==================================================================================== #
-
-# GET
-.PHONY: test/api/departments/get
-test/api/departments/get:
-	curl -i "http://localhost:4000/v1/departments/Hotel%20Operations"
-
-# GET ALL
-.PHONY: test/api/departments/get-all
-test/api/departments/get-all:
-	curl -i http://localhost:4000/v1/departments
-
-# GET ALL (filtered by name)
-.PHONY: test/api/departments/get-all-name
-test/api/departments/get-all-name:
-	curl -i http://localhost:4000/v1/departments?name=housekeeping
-
-# GET ALL (filters, pagination and sorting)
-.PHONY: test/api/departments/get-all-filters
-test/api/departments/get-all-filters:
-	curl -i "http://localhost:4000/v1/departments?page=1&page_size=3&sort=-budget"
-
-# POST
-.PHONY: test/api/departments/post
-test/api/departments/post:
-	curl -i -X POST http://localhost:4000/v1/departments -d @test/department/01-post.json
-
-# PUT
-.PHONY: test/api/departments/put
-test/api/departments/put:
-	curl -i -X PUT "http://localhost:4000/v1/departments/Restaurant%20Operations" -d @test/department/02-put.json
-
-# PATCH
-.PHONY: test/api/departments/patch
-test/api/departments/patch:
-	curl -i -X PATCH "http://localhost:4000/v1/departments/Restaurant%20Operations" -d @test/department/03-patch.json
-
-# DELETE
-.PHONY: test/api/departments/delete
-test/api/departments/delete:
-	curl -i -X DELETE "http://localhost:4000/v1/departments/Restaurant%20Operations"
-
-# ==================================================================================== #
 # Room Model
 # ==================================================================================== #
 
