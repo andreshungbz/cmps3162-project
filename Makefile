@@ -26,7 +26,14 @@ help:
 ## run: Run the cmp/api application
 .PHONY: run
 run:
-	go run ./cmd/api -db-dsn=${HOTEL_DB_DSN}
+	go run ./cmd/api \
+		-db-dsn=${HOTEL_DB_DSN} \
+		-port=${PORT} \
+		-limiter-rps=${RATE_LIMITER_RPS} \
+		-limiter-burst=${RATE_LIMITER_BURST} \
+		-limiter-enabled=${RATE_LIMITER_ENABLED} \
+		-timeout=${TIMEOUT} \
+		-cors-trusted-origins=${CORS_TRUSTED_ORIGINS}
 
 # ==================================================================================== #
 # DATABASE MIGRATIONS
