@@ -110,9 +110,9 @@ func (app *application) createEmployeeHandler(w http.ResponseWriter, r *http.Req
 	}
 }
 
-// showEmployeeHandler calls Employee.GetByEmail.
+// showEmployeeByEmailHandler calls Employee.GetByEmail.
 // Writes JSON of the retrieved employee record.
-func (app *application) showEmployeeHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) showEmployeeByEmailHandler(w http.ResponseWriter, r *http.Request) {
 	email := app.readStringParam("email", r)
 	if email == "" {
 		app.notFoundResponse(w, r)
@@ -120,6 +120,29 @@ func (app *application) showEmployeeHandler(w http.ResponseWriter, r *http.Reque
 	}
 
 	employee, err := app.models.Employee.GetByEmail(email)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	app.writeJSON(w, http.StatusOK, envelope{"employee": employee}, nil)
+}
+
+// showEmployeeByIDHandler calls Employee.GetByEmail.
+// Writes JSON of the retrieved employee record.
+func (app *application) showEmployeeByIDHandler(w http.ResponseWriter, r *http.Request) {
+	id, err := app.readInt64Param("id", r)
+	if err != nil {
+		app.notFoundResponse(w, r)
+		return
+	}
+
+	employee, err := app.models.Employee.GetByID(id)
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):

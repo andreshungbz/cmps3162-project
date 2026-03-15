@@ -1,0 +1,9 @@
+$kind: http-request
+name: housekeeper-by-id
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/housekeepers/3"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
+order: 4494061855367413

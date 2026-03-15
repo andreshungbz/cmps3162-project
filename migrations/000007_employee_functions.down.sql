@@ -11,6 +11,8 @@ DROP FUNCTION IF EXISTS fn_get_employees(TEXT);
 
 DROP FUNCTION IF EXISTS fn_get_employee_for_token(BYTEA, TEXT);
 
+DROP FUNCTION IF EXISTS fn_get_employee_by_id(BIGINT);
+
 DROP FUNCTION IF EXISTS fn_get_employee_by_email(CITEXT);
 
 DROP FUNCTION IF EXISTS fn_create_employee(

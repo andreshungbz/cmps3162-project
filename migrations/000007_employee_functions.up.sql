@@ -164,6 +164,100 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- ====================================================================================
+-- READ FUNCTION fn_get_employee_by_id returns employee and person data by employee id.
+-- ====================================================================================
+
+CREATE OR REPLACE FUNCTION fn_get_employee_by_id(
+    p_id BIGINT
+)
+RETURNS TABLE (
+    -- person attributes
+    name TEXT,
+    gender TEXT,
+    street TEXT,
+    city TEXT,
+    country TEXT,
+    created_at TIMESTAMP(0) WITH TIME ZONE,
+    modified_at TIMESTAMP(0) WITH TIME ZONE,
+    -- employee attributes
+    id BIGINT,
+    hotel_id BIGINT,
+    department TEXT,
+    manager_id BIGINT,
+    salary NUMERIC,
+    ssn TEXT,
+    work_email CITEXT,
+    work_phone TEXT,
+    password_hash BYTEA,
+    employed BOOLEAN,
+    activated BOOLEAN,
+    -- role-specific attributes
+    role TEXT,
+    hotel_owner BOOLEAN,
+    shift shift_type
+)
+AS $$
+DECLARE
+    v_role TEXT;
+    v_employee_id BIGINT;
+BEGIN
+    -- find employee id
+    SELECT e.id
+    INTO v_employee_id
+    FROM employee e
+    WHERE e.id = p_id;
+
+    IF v_employee_id IS NULL THEN
+        RAISE EXCEPTION '[employee-not-found] Employee with id % does not exist', p_id;
+    END IF;
+
+    -- determine role
+    IF EXISTS (SELECT 1 FROM operations_manager om WHERE om.id = v_employee_id) THEN
+        v_role := 'operations_manager';
+    ELSIF EXISTS (SELECT 1 FROM front_desk fd WHERE fd.id = v_employee_id) THEN
+        v_role := 'front_desk';
+    ELSIF EXISTS (SELECT 1 FROM housekeeper hk WHERE hk.id = v_employee_id) THEN
+        v_role := 'housekeeper';
+    ELSE
+        RAISE EXCEPTION '[employee-not-found] Employee with id % has no valid role', p_id;
+    END IF;
+
+    RETURN QUERY
+    SELECT
+        -- person attributes
+        p.name,
+        p.gender,
+        p.street,
+        p.city,
+        p.country,
+        p.created_at,
+        p.modified_at,
+        -- employee attributes
+        e.id,
+        e.hotel_id,
+        e.department,
+        e.manager_id,
+        e.salary,
+        e.ssn,
+        e.work_email,
+        e.work_phone,
+        e.password_hash,
+        e.employed,
+        e.activated,
+        -- role-specific attributes
+        v_role,
+        om.hotel_owner,
+        COALESCE(fd.shift, hk.shift) AS shift
+    FROM employee e
+    JOIN person p ON p.id = e.id
+    LEFT JOIN operations_manager om ON om.id = e.id
+    LEFT JOIN front_desk fd ON fd.id = e.id
+    LEFT JOIN housekeeper hk ON hk.id = e.id
+    WHERE e.id = v_employee_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ====================================================================================
 -- READ FUNCTION fn_get_employee_for_token returns employee and person data for a
 -- valid token hash and scope.
 -- ====================================================================================

@@ -53,11 +53,13 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodDelete, "/v1/hotels/:id/rooms/:number", app.requirePermission("room:write", app.deleteRoomHandler))
 
 	// employee routes
-	router.HandlerFunc(http.MethodGet, "/v1/employees/:email", app.requirePermission("employee:read", app.showEmployeeHandler))
+	router.HandlerFunc(http.MethodGet, "/v1/employees/:email", app.requirePermission("employee:read", app.showEmployeeByEmailHandler))
 	router.HandlerFunc(http.MethodGet, "/v1/employees", app.requirePermission("employee:read", app.listEmployeesHandler))
 	router.HandlerFunc(http.MethodPost, "/v1/employees", app.requirePermission("employee:write", app.createEmployeeHandler))
 	router.HandlerFunc(http.MethodPut, "/v1/employees/:email", app.requirePermission("employee:write", app.updateEmployeeHandler))
 	router.HandlerFunc(http.MethodDelete, "/v1/employees/:id", app.requirePermission("employee:write", app.deleteEmployeeHandler))
+	// housekeeper
+	router.HandlerFunc(http.MethodGet, "/v1/housekeepers/:id", app.requirePermission("employee:read", app.showEmployeeByIDHandler))
 	// activation token
 	router.HandlerFunc(http.MethodPut, "/v1/activated/employees", app.activateEmployeeHandler)
 

@@ -208,6 +208,39 @@ func (m EmployeeModel) GetByEmail(email string) (*Employee, error) {
 	return &employee, nil
 }
 
+// GetByID retrieves a single employee record by ID.
+func (m EmployeeModel) GetByID(id int64) (*Employee, error) {
+	query := `SELECT * FROM fn_get_employee_by_id($1)`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var employee Employee
+	err := m.DB.QueryRowContext(ctx, query, id).Scan(
+		// person attributes
+		&employee.Name, &employee.Gender, &employee.Street, &employee.City, &employee.Country,
+		&employee.CreatedAt, &employee.ModifiedAt,
+		// employee attributes
+		&employee.ID, &employee.HotelID, &employee.Department, &employee.ManagerID, &employee.Salary, &employee.SSN,
+		&employee.WorkEmail, &employee.WorkPhone, &employee.Password.hash, &employee.Employed, &employee.Activated,
+		// role-specific attributes
+		&employee.Role, &employee.HotelOwner, &employee.Shift,
+	)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrRecordNotFound
+		case strings.Contains(err.Error(), "[employee-not-found]"):
+			return nil, ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &employee, nil
+}
+
 // GetForToken retrieves the employee record who has the given token and scope.
 func (m EmployeeModel) GetForToken(tokenScope, tokenPlaintext string) (*Employee, error) {
 	// calculate token hash
