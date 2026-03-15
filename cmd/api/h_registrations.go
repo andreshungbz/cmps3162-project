@@ -146,8 +146,14 @@ func (app *application) updateRegistrationHandler(w http.ResponseWriter, r *http
 		return
 	}
 
+	registration, err := app.models.Registration.Get(reservationID, hotelID, roomNumber)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
 	var input struct {
-		RoomNumber int `json:"room_number"`
+		RoomNumber *int `json:"room_number"`
 	}
 
 	err = app.readJSON(w, r, &input)
@@ -156,7 +162,7 @@ func (app *application) updateRegistrationHandler(w http.ResponseWriter, r *http
 		return
 	}
 
-	err = app.models.Registration.Update(reservationID, hotelID, roomNumber, input.RoomNumber)
+	err = app.models.Registration.Update(reservationID, hotelID, roomNumber, *input.RoomNumber)
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
@@ -167,11 +173,8 @@ func (app *application) updateRegistrationHandler(w http.ResponseWriter, r *http
 		return
 	}
 
-	// get updated registration
-	registration, err := app.models.Registration.Get(reservationID, hotelID, input.RoomNumber)
-	if err != nil {
-		app.serverErrorResponse(w, r, err)
-		return
+	if input.RoomNumber != nil {
+		registration.RoomNumber = *input.RoomNumber
 	}
 
 	app.writeJSON(w, http.StatusOK, envelope{"registration": registration}, nil)

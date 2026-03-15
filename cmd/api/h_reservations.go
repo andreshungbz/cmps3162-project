@@ -120,14 +120,20 @@ func (app *application) updateReservationHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
+	reservation, err := app.models.Reservation.Get(id)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
 	var input struct {
-		CheckinDate   string  `json:"checkin_date"`
-		CheckoutDate  string  `json:"checkout_date"`
-		PaymentAmount float64 `json:"payment_amount"`
-		PaymentMethod string  `json:"payment_method"`
-		Source        string  `json:"source"`
-		Completed     bool    `json:"completed"`
-		Canceled      bool    `json:"canceled"`
+		CheckinDate   *string  `json:"checkin_date"`
+		CheckoutDate  *string  `json:"checkout_date"`
+		PaymentAmount *float64 `json:"payment_amount"`
+		PaymentMethod *string  `json:"payment_method"`
+		Source        *string  `json:"source"`
+		Completed     *bool    `json:"completed"`
+		Canceled      *bool    `json:"canceled"`
 	}
 
 	err = app.readJSON(w, r, &input)
@@ -136,15 +142,26 @@ func (app *application) updateReservationHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	reservation := &data.Reservation{
-		ID:            id,
-		CheckinDate:   input.CheckinDate,
-		CheckoutDate:  input.CheckoutDate,
-		PaymentAmount: input.PaymentAmount,
-		PaymentMethod: input.PaymentMethod,
-		Source:        input.Source,
-		Completed:     input.Completed,
-		Canceled:      input.Canceled,
+	if input.CheckinDate != nil {
+		reservation.CheckinDate = *input.CheckinDate
+	}
+	if input.CheckoutDate != nil {
+		reservation.CheckoutDate = *input.CheckoutDate
+	}
+	if input.PaymentAmount != nil {
+		reservation.PaymentAmount = *input.PaymentAmount
+	}
+	if input.PaymentMethod != nil {
+		reservation.PaymentMethod = *input.PaymentMethod
+	}
+	if input.Source != nil {
+		reservation.Source = *input.Source
+	}
+	if input.Completed != nil {
+		reservation.Completed = *input.Completed
+	}
+	if input.Canceled != nil {
+		reservation.Canceled = *input.Canceled
 	}
 
 	err = app.models.Reservation.Update(reservation)
@@ -158,13 +175,7 @@ func (app *application) updateReservationHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	newRes, err := app.models.Reservation.Get(id)
-	if err != nil {
-		app.serverErrorResponse(w, r, err)
-		return
-	}
-
-	app.writeJSON(w, http.StatusOK, envelope{"reservation": newRes}, nil)
+	app.writeJSON(w, http.StatusOK, envelope{"reservation": reservation}, nil)
 }
 
 // deleteReservationHandler removes a reservation.
