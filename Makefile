@@ -154,12 +154,12 @@ test/cors/server-with-trusted-origins:
 # (note: Go sets Transfer-Encoding to chunked when it doesn't know the final size)
 .PHONY: test/gzip/uncompressed
 test/gzip/uncompressed:
-	curl --silent --dump-header - --output /dev/null http://localhost:4000/v1/guests
-	@printf "Uncompressed Size (bytes): %s\n" "$$(curl --silent http://localhost:4000/v1/guests | wc -c)"
+	curl --silent --dump-header - --output /dev/null http://localhost:4000/v1/observability/metrics
+	@printf "Uncompressed Size (bytes): %s\n" "$$(curl --silent http://localhost:4000/v1/observability/metrics | wc -c)"
 
 # 2) GZIP Compressed Response
 # (note: With GZIP compression the output is buffered so Go can set Content-Length)
 .PHONY: test/gzip/compressed
 test/gzip/compressed:
-	curl --silent --dump-header - --output /dev/null -H "Accept-Encoding: gzip" http://localhost:4000/v1/guests
-	@printf "GZIP Compressed Size (bytes): %s\n" "$$(curl --silent -H "Accept-Encoding: gzip" http://localhost:4000/v1/guests | wc -c)"
+	curl --silent --dump-header - --output /dev/null -H "Accept-Encoding: gzip" http://localhost:4000/v1/observability/metrics
+	@printf "GZIP Compressed Size (bytes): %s\n" "$$(curl --silent -H "Accept-Encoding: gzip" http://localhost:4000/v1/observability/metrics | wc -c)"
