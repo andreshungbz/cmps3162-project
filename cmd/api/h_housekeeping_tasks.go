@@ -54,12 +54,6 @@ func (app *application) createHousekeepingTaskHandler(w http.ResponseWriter, r *
 		return
 	}
 
-	task, err = app.models.HousekeepingTask.Get(task.ID)
-	if err != nil {
-		app.serverErrorResponse(w, r, err)
-		return
-	}
-
 	headers := make(http.Header)
 	headers.Set("Location", fmt.Sprintf("/v1/housekeeping_tasks/%d", task.ID))
 
@@ -188,12 +182,6 @@ func (app *application) updateHousekeepingTaskHandler(w http.ResponseWriter, r *
 	}
 
 	err = app.models.HousekeepingTask.Update(task)
-	if err != nil {
-		app.serverErrorResponse(w, r, err)
-		return
-	}
-
-	task, err = app.models.HousekeepingTask.Get(id)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return

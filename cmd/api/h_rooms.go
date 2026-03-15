@@ -190,12 +190,6 @@ func (app *application) updateRoomHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	room, err = app.models.Room.Get(hotelID, number)
-	if err != nil {
-		app.serverErrorResponse(w, r, err)
-		return
-	}
-
 	app.writeJSON(w, http.StatusOK, envelope{"room": room}, nil)
 }
 

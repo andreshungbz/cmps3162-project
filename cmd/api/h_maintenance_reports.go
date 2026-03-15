@@ -54,12 +54,6 @@ func (app *application) createMaintenanceReportHandler(w http.ResponseWriter, r 
 		return
 	}
 
-	report, err = app.models.MaintenanceReport.Get(report.ID)
-	if err != nil {
-		app.serverErrorResponse(w, r, err)
-		return
-	}
-
 	headers := make(http.Header)
 	headers.Set("Location", fmt.Sprintf("/v1/maintenance_reports/%d", report.ID))
 
@@ -183,12 +177,6 @@ func (app *application) updateMaintenanceReportHandler(w http.ResponseWriter, r 
 	}
 
 	err = app.models.MaintenanceReport.Update(report)
-	if err != nil {
-		app.serverErrorResponse(w, r, err)
-		return
-	}
-
-	report, err = app.models.MaintenanceReport.Get(id)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
