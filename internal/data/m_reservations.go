@@ -87,8 +87,7 @@ func (m ReservationModel) Get(id int64) (*Reservation, error) {
 	}
 
 	// get registrations
-	regModel := RegistrationModel{DB: m.DB}
-	regs, _, err := regModel.GetAll(
+	regs, _, err := (&RegistrationModel{DB: m.DB}).GetAll(
 		r.ID,
 		Filters{Page: 1, PageSize: 1000, Sort: "room_number", SortSafelist: []string{"room_number"}},
 	)
@@ -134,8 +133,7 @@ func (m ReservationModel) GetAll(filters Filters) ([]*Reservation, Metadata, err
 		}
 
 		// get registrations
-		regModel := RegistrationModel{DB: m.DB}
-		regs, _, err := regModel.GetAll(
+		regs, _, err := (&RegistrationModel{DB: m.DB}).GetAll(
 			r.ID, Filters{Page: 1, PageSize: 1000, Sort: "room_number", SortSafelist: []string{"room_number"}},
 		)
 		if err != nil {
