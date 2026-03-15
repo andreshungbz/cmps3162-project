@@ -12,8 +12,6 @@ import (
 // createGuestHandler calls Guest.Insert.
 // Writes JSON of the created guest record and its resource location.
 func (app *application) createGuestHandler(w http.ResponseWriter, r *http.Request) {
-	// Read JSON input into a Guest
-
 	var input struct {
 		// person attributes
 		Name    string `json:"name"`
@@ -172,8 +170,6 @@ func (app *application) updateGuestHandler(w http.ResponseWriter, r *http.Reques
 		}
 		return
 	}
-
-	// Read JSON input
 
 	var input struct {
 		// person attributes

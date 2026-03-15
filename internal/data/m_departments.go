@@ -33,10 +33,7 @@ func (m DepartmentModel) Insert(d *Department) error {
 		INSERT INTO department (dept_name, budget)
 		VALUES ($1, $2)`
 
-	args := []any{
-		d.DeptName,
-		d.Budget,
-	}
+	args := []any{d.DeptName, d.Budget}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -51,16 +48,12 @@ func (m DepartmentModel) Get(name string) (*Department, error) {
 		SELECT dept_name, budget
 		FROM department
 		WHERE dept_name = $1`
-	var d Department
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, name).Scan(
-		&d.DeptName,
-		&d.Budget,
-	)
-
+	var d Department
+	err := m.DB.QueryRowContext(ctx, query, name).Scan(&d.DeptName, &d.Budget)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -77,8 +70,7 @@ func (m DepartmentModel) Get(name string) (*Department, error) {
 func (m DepartmentModel) GetAll(name string, filters Filters) ([]*Department, Metadata, error) {
 	query := fmt.Sprintf(`
 		SELECT count(*) OVER(),
-			dept_name,
-			budget
+			dept_name, budget
 		FROM department
 		WHERE (to_tsvector('simple', dept_name) @@ plainto_tsquery('simple', $1) OR $1 = '')
 		ORDER BY %s %s, dept_name ASC
@@ -99,28 +91,20 @@ func (m DepartmentModel) GetAll(name string, filters Filters) ([]*Department, Me
 
 	totalRecords := 0
 	departments := []*Department{}
-
 	for rows.Next() {
 		var d Department
-
-		err := rows.Scan(
-			&totalRecords,
-			&d.DeptName,
-			&d.Budget,
-		)
+		err := rows.Scan(&totalRecords, &d.DeptName, &d.Budget)
 		if err != nil {
 			return nil, Metadata{}, err
 		}
 
 		departments = append(departments, &d)
 	}
-
 	if err = rows.Err(); err != nil {
 		return nil, Metadata{}, err
 	}
 
 	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
-
 	return departments, metadata, nil
 }
 
@@ -131,10 +115,7 @@ func (m DepartmentModel) Update(d *Department) error {
 		SET budget = $1
 		WHERE dept_name = $2`
 
-	args := []any{
-		d.Budget,
-		d.DeptName,
-	}
+	args := []any{d.Budget, d.DeptName}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -143,12 +124,10 @@ func (m DepartmentModel) Update(d *Department) error {
 	if err != nil {
 		return err
 	}
-
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}
@@ -167,12 +146,10 @@ func (m DepartmentModel) Delete(name string) error {
 	if err != nil {
 		return err
 	}
-
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}

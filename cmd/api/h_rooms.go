@@ -167,11 +167,9 @@ func (app *application) updateRoomHandler(w http.ResponseWriter, r *http.Request
 	if input.RoomTypeID != nil {
 		room.RoomTypeID = *input.RoomTypeID
 	}
-
 	if input.Floor != nil {
 		room.Floor = *input.Floor
 	}
-
 	if input.StatusCode != nil {
 		room.StatusCode = *input.StatusCode
 	}

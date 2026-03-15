@@ -12,14 +12,18 @@ import (
 
 // HousekeepingTask maps the housekeeping_task entity.
 type HousekeepingTask struct {
-	ID            int64     `json:"id"`
-	HotelID       int64     `json:"hotel_id"`
-	RoomNumber    int       `json:"room_number"`
-	HousekeeperID *int64    `json:"housekeeper_id,omitempty"`
-	TaskType      string    `json:"task_type"`
-	Completed     bool      `json:"completed"`
-	CreatedAt     time.Time `json:"created_at"`
-	ModifiedAt    time.Time `json:"modified_at"`
+	// housekeeping_task attribute
+	ID int64 `json:"id"`
+	// room attributes
+	HotelID    int64 `json:"hotel_id"`
+	RoomNumber int   `json:"room_number"`
+	// employee attribute
+	HousekeeperID *int64 `json:"housekeeper_id,omitempty"`
+	// housekeeping_task attributes
+	TaskType   string    `json:"task_type"`
+	Completed  bool      `json:"completed"`
+	CreatedAt  time.Time `json:"created_at"`
+	ModifiedAt time.Time `json:"modified_at"`
 }
 
 // ValidateHousekeepingTask performs validation checks for a housekeeping_task record.
@@ -37,52 +41,33 @@ type HousekeepingTaskModel struct {
 // Insert creates a housekeeping_task record.
 func (m HousekeepingTaskModel) Insert(t *HousekeepingTask) error {
 	query := `
-		INSERT INTO housekeeping_task
-		(hotel_id, room_number, housekeeper_id, task_type)
+		INSERT INTO housekeeping_task (hotel_id, room_number, housekeeper_id, task_type)
 		VALUES ($1, $2, $3, $4)
 		RETURNING id, created_at, modified_at, completed`
 
-	args := []any{
-		t.HotelID,
-		t.RoomNumber,
-		t.HousekeeperID,
-		t.TaskType,
-	}
+	args := []any{t.HotelID, t.RoomNumber, t.HousekeeperID, t.TaskType}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	return m.DB.QueryRowContext(ctx, query, args...).Scan(
-		&t.ID,
-		&t.CreatedAt,
-		&t.ModifiedAt,
-		&t.Completed,
-	)
+	return m.DB.QueryRowContext(ctx, query, args...).Scan(&t.ID, &t.CreatedAt, &t.ModifiedAt, &t.Completed)
 }
 
 // Get retrieves a single housekeeping_task record by id.
 func (m HousekeepingTaskModel) Get(id int64) (*HousekeepingTask, error) {
 	query := `
-		SELECT id, hotel_id, room_number, housekeeper_id,
-		    task_type, completed, created_at, modified_at
+		SELECT id, hotel_id, room_number, housekeeper_id, task_type, completed, created_at, modified_at
 		FROM housekeeping_task
 		WHERE id = $1`
-	var t HousekeepingTask
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
+	var ht HousekeepingTask
 	err := m.DB.QueryRowContext(ctx, query, id).Scan(
-		&t.ID,
-		&t.HotelID,
-		&t.RoomNumber,
-		&t.HousekeeperID,
-		&t.TaskType,
-		&t.Completed,
-		&t.CreatedAt,
-		&t.ModifiedAt,
+		&ht.ID, &ht.HotelID, &ht.RoomNumber, &ht.HousekeeperID,
+		&ht.TaskType, &ht.Completed, &ht.CreatedAt, &ht.ModifiedAt,
 	)
-
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -92,7 +77,7 @@ func (m HousekeepingTaskModel) Get(id int64) (*HousekeepingTask, error) {
 		}
 	}
 
-	return &t, nil
+	return &ht, nil
 }
 
 // GetAll retrieves multiple housekeeping_task records (filterable).
@@ -100,14 +85,7 @@ func (m HousekeepingTaskModel) GetAll(hotelID int64, roomNumber int, housekeeper
 	query := fmt.Sprintf(`
 		SELECT
 			count(*) OVER(),
-			id,
-			hotel_id,
-			room_number,
-			housekeeper_id,
-			task_type,
-			completed,
-			created_at,
-			modified_at
+			id, hotel_id, room_number, housekeeper_id, task_type, completed, created_at, modified_at
 		FROM housekeeping_task
 		WHERE hotel_id = $1
 		AND room_number = $2
@@ -117,13 +95,7 @@ func (m HousekeepingTaskModel) GetAll(hotelID int64, roomNumber int, housekeeper
 		filters.sortColumn(), filters.sortDirection(),
 	)
 
-	args := []any{
-		hotelID,
-		roomNumber,
-		housekeeperID,
-		filters.limit(),
-		filters.offset(),
-	}
+	args := []any{hotelID, roomNumber, housekeeperID, filters.limit(), filters.offset()}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -137,32 +109,23 @@ func (m HousekeepingTaskModel) GetAll(hotelID int64, roomNumber int, housekeeper
 	totalRecords := 0
 	tasks := []*HousekeepingTask{}
 	for rows.Next() {
-		var t HousekeepingTask
-
+		var ht HousekeepingTask
 		err := rows.Scan(
 			&totalRecords,
-			&t.ID,
-			&t.HotelID,
-			&t.RoomNumber,
-			&t.HousekeeperID,
-			&t.TaskType,
-			&t.Completed,
-			&t.CreatedAt,
-			&t.ModifiedAt,
+			&ht.ID, &ht.HotelID, &ht.RoomNumber, &ht.HousekeeperID,
+			&ht.TaskType, &ht.Completed, &ht.CreatedAt, &ht.ModifiedAt,
 		)
 		if err != nil {
 			return nil, Metadata{}, err
 		}
 
-		tasks = append(tasks, &t)
+		tasks = append(tasks, &ht)
 	}
-
 	if err = rows.Err(); err != nil {
 		return nil, Metadata{}, err
 	}
 
 	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
-
 	return tasks, metadata, nil
 }
 
@@ -170,18 +133,10 @@ func (m HousekeepingTaskModel) GetAll(hotelID int64, roomNumber int, housekeeper
 func (m HousekeepingTaskModel) Update(t *HousekeepingTask) error {
 	query := `
 		UPDATE housekeeping_task
-		SET housekeeper_id=$1,
-		    task_type=$2,
-		    completed=$3,
-		    modified_at=NOW()
+		SET housekeeper_id=$1, task_type=$2, completed=$3
 		WHERE id=$4`
 
-	args := []any{
-		t.HousekeeperID,
-		t.TaskType,
-		t.Completed,
-		t.ID,
-	}
+	args := []any{t.HousekeeperID, t.TaskType, t.Completed, t.ID}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -190,12 +145,10 @@ func (m HousekeepingTaskModel) Update(t *HousekeepingTask) error {
 	if err != nil {
 		return err
 	}
-
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}
@@ -214,12 +167,10 @@ func (m HousekeepingTaskModel) Delete(id int64) error {
 	if err != nil {
 		return err
 	}
-
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}

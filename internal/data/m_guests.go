@@ -63,15 +63,9 @@ func (g GuestModel) Insert(guest *Guest) error {
 
 	args := []any{
 		// person attributes
-		guest.Name,
-		guest.Gender,
-		guest.Street,
-		guest.City,
-		guest.Country,
+		guest.Name, guest.Gender, guest.Street, guest.City, guest.Country,
 		// guest attributes
-		guest.PassportNumber,
-		guest.ContactEmail,
-		guest.ContactPhone,
+		guest.PassportNumber, guest.ContactEmail, guest.ContactPhone,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -93,27 +87,17 @@ func (g GuestModel) Insert(guest *Guest) error {
 // GetByPassport retrieves a single guest record by passport_number.
 func (g GuestModel) GetByPassport(passport string) (*Guest, error) {
 	query := `SELECT * FROM fn_get_guest_by_passport($1)`
-	var guest Guest
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
+	var guest Guest
 	err := g.DB.QueryRowContext(ctx, query, passport).Scan(
 		// person attributes
-		&guest.Name,
-		&guest.Gender,
-		&guest.Street,
-		&guest.City,
-		&guest.Country,
-		&guest.CreatedAt,
-		&guest.ModifiedAt,
+		&guest.Name, &guest.Gender, &guest.Street, &guest.City, &guest.Country, &guest.CreatedAt, &guest.ModifiedAt,
 		// guest attributes
-		&guest.ID,
-		&guest.PassportNumber,
-		&guest.ContactEmail,
-		&guest.ContactPhone,
+		&guest.ID, &guest.PassportNumber, &guest.ContactEmail, &guest.ContactPhone,
 	)
-
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -134,8 +118,7 @@ func (g GuestModel) GetAll(name string, country string, filters Filters) ([]*Gue
 	//		e.g. "John Smith" -> 'john' + 'smith'
 	// - @@ is the matches operator.
 	query := fmt.Sprintf(`
-		SELECT *
-		FROM fn_get_guests($1,$2)
+		SELECT * FROM fn_get_guests($1,$2)
 		ORDER BY %s %s, id ASC
 		LIMIT $3 OFFSET $4`,
 		filters.sortColumn(),
@@ -160,22 +143,12 @@ func (g GuestModel) GetAll(name string, country string, filters Filters) ([]*Gue
 	guests := []*Guest{}
 	for rows.Next() {
 		var guest Guest
-
 		err := rows.Scan(
 			&totalRecords,
 			// person attributes
-			&guest.Name,
-			&guest.Gender,
-			&guest.Street,
-			&guest.City,
-			&guest.Country,
-			&guest.CreatedAt,
-			&guest.ModifiedAt,
+			&guest.Name, &guest.Gender, &guest.Street, &guest.City, &guest.Country, &guest.CreatedAt, &guest.ModifiedAt,
 			// guest attributes
-			&guest.ID,
-			&guest.PassportNumber,
-			&guest.ContactEmail,
-			&guest.ContactPhone,
+			&guest.ID, &guest.PassportNumber, &guest.ContactEmail, &guest.ContactPhone,
 		)
 		if err != nil {
 			return nil, Metadata{}, err
@@ -183,14 +156,12 @@ func (g GuestModel) GetAll(name string, country string, filters Filters) ([]*Gue
 
 		guests = append(guests, &guest)
 	}
-
 	if err = rows.Err(); err != nil {
 		return nil, Metadata{}, err
 	}
 
 	// construct Metadata object
 	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
-
 	return guests, metadata, nil
 }
 
@@ -200,15 +171,9 @@ func (g GuestModel) Update(guest *Guest) error {
 
 	args := []any{
 		// person attributes
-		guest.Name,
-		guest.Gender,
-		guest.Street,
-		guest.City,
-		guest.Country,
+		guest.Name, guest.Gender, guest.Street, guest.City, guest.Country,
 		// guest attributes
-		guest.PassportNumber,
-		guest.ContactEmail,
-		guest.ContactPhone,
+		guest.PassportNumber, guest.ContactEmail, guest.ContactPhone,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -223,14 +188,11 @@ func (g GuestModel) Update(guest *Guest) error {
 			return err
 		}
 	}
-
 	// No rows being affected means the guest's passport is not in the database
-
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}
@@ -249,14 +211,11 @@ func (g GuestModel) Delete(passport string) error {
 	if err != nil {
 		return err
 	}
-
 	// No rows being affected means the guest's passport is not in the database
-
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}

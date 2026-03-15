@@ -40,13 +40,7 @@ func (m RoomTypeModel) Insert(rt *RoomType) error {
 		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id`
 
-	args := []any{
-		rt.Title,
-		rt.BaseRate,
-		rt.MaxOccupancy,
-		rt.BedCount,
-		rt.HasBalcony,
-	}
+	args := []any{rt.Title, rt.BaseRate, rt.MaxOccupancy, rt.BedCount, rt.HasBalcony}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -60,20 +54,12 @@ func (m RoomTypeModel) Get(id int64) (*RoomType, error) {
 		SELECT id, title, base_rate, max_occupancy, bed_count, has_balcony
 		FROM room_type
 		WHERE id = $1`
-	var rt RoomType
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, id).Scan(
-		&rt.ID,
-		&rt.Title,
-		&rt.BaseRate,
-		&rt.MaxOccupancy,
-		&rt.BedCount,
-		&rt.HasBalcony,
-	)
-
+	var rt RoomType
+	err := m.DB.QueryRowContext(ctx, query, id).Scan(&rt.ID, &rt.Title, &rt.BaseRate, &rt.MaxOccupancy, &rt.BedCount, &rt.HasBalcony)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -89,13 +75,7 @@ func (m RoomTypeModel) Get(id int64) (*RoomType, error) {
 // GetAll retrieves multiple room_type records (filterable).
 func (m RoomTypeModel) GetAll(title string, filters Filters) ([]*RoomType, Metadata, error) {
 	query := fmt.Sprintf(`
-		SELECT count(*) OVER(),
-			id,
-			title,
-			base_rate,
-			max_occupancy,
-			bed_count,
-			has_balcony
+		SELECT count(*) OVER(), id, title, base_rate, max_occupancy, bed_count, has_balcony
 		FROM room_type
 		WHERE (to_tsvector('simple', title) @@ plainto_tsquery('simple', $1) OR $1 = '')
 		ORDER BY %s %s, id ASC
@@ -118,29 +98,18 @@ func (m RoomTypeModel) GetAll(title string, filters Filters) ([]*RoomType, Metad
 	roomTypes := []*RoomType{}
 	for rows.Next() {
 		var rt RoomType
-
-		err := rows.Scan(
-			&totalRecords,
-			&rt.ID,
-			&rt.Title,
-			&rt.BaseRate,
-			&rt.MaxOccupancy,
-			&rt.BedCount,
-			&rt.HasBalcony,
-		)
+		err := rows.Scan(&totalRecords, &rt.ID, &rt.Title, &rt.BaseRate, &rt.MaxOccupancy, &rt.BedCount, &rt.HasBalcony)
 		if err != nil {
 			return nil, Metadata{}, err
 		}
 
 		roomTypes = append(roomTypes, &rt)
 	}
-
 	if err = rows.Err(); err != nil {
 		return nil, Metadata{}, err
 	}
 
 	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
-
 	return roomTypes, metadata, nil
 }
 
@@ -148,21 +117,10 @@ func (m RoomTypeModel) GetAll(title string, filters Filters) ([]*RoomType, Metad
 func (m RoomTypeModel) Update(rt *RoomType) error {
 	query := `
 		UPDATE room_type
-		SET title = $1,
-			base_rate = $2,
-			max_occupancy = $3,
-			bed_count = $4,
-			has_balcony = $5
+		SET title = $1, base_rate = $2, max_occupancy = $3, bed_count = $4, has_balcony = $5
 		WHERE id = $6`
 
-	args := []any{
-		rt.Title,
-		rt.BaseRate,
-		rt.MaxOccupancy,
-		rt.BedCount,
-		rt.HasBalcony,
-		rt.ID,
-	}
+	args := []any{rt.Title, rt.BaseRate, rt.MaxOccupancy, rt.BedCount, rt.HasBalcony, rt.ID}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -171,12 +129,10 @@ func (m RoomTypeModel) Update(rt *RoomType) error {
 	if err != nil {
 		return err
 	}
-
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}
@@ -195,12 +151,10 @@ func (m RoomTypeModel) Delete(id int64) error {
 	if err != nil {
 		return err
 	}
-
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}

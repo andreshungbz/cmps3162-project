@@ -52,7 +52,6 @@ func (app *application) showDepartmentHandler(w http.ResponseWriter, r *http.Req
 	}
 
 	d, err := app.models.Department.Get(name)
-
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
@@ -110,7 +109,6 @@ func (app *application) updateDepartmentHandler(w http.ResponseWriter, r *http.R
 	}
 
 	d, err := app.models.Department.Get(name)
-
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):

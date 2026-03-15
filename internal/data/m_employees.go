@@ -118,7 +118,6 @@ func ValidateEmployee(v *validator.Validator, e *Employee) {
 	v.Check(e.SSN != "", "ssn", "must be provided")
 	ValidateWorkEmail(v, e.WorkEmail)
 	v.Check(e.WorkPhone != "", "work_phone", "must be provided")
-
 	if e.Password.plaintext != nil {
 		ValidatePasswordPlaintext(v, *e.Password.plaintext)
 	}
@@ -128,7 +127,6 @@ func ValidateEmployee(v *validator.Validator, e *Employee) {
 
 	// role-specific attributes
 	v.Check(e.Role != "", "role", "must be provided")
-
 	switch e.Role {
 	case "operations_manager":
 		v.Check(e.HotelOwner != nil, "hotel_owner", "must be provided for operations_manager")
@@ -150,26 +148,12 @@ func (m EmployeeModel) Insert(e *Employee) error {
 
 	args := []any{
 		// person attributes
-		e.Name,
-		e.Gender,
-		e.Street,
-		e.City,
-		e.Country,
+		e.Name, e.Gender, e.Street, e.City, e.Country,
 		// employee attributes
-		e.HotelID,
-		e.Department,
-		e.ManagerID,
-		e.Salary,
-		e.SSN,
-		e.WorkEmail,
-		e.WorkPhone,
-		e.Password.hash,
-		e.Employed,
-		e.Activated,
+		e.HotelID, e.Department, e.ManagerID, e.Salary, e.SSN,
+		e.WorkEmail, e.WorkPhone, e.Password.hash, e.Employed, e.Activated,
 		// role-specific attributes
-		e.Role,
-		e.HotelOwner,
-		e.Shift,
+		e.Role, e.HotelOwner, e.Shift,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -195,38 +179,21 @@ func (m EmployeeModel) Insert(e *Employee) error {
 // GetByEmail retrieves a single employee record by work email.
 func (m EmployeeModel) GetByEmail(email string) (*Employee, error) {
 	query := `SELECT * FROM fn_get_employee_by_email($1)`
-	var employee Employee
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
+	var employee Employee
 	err := m.DB.QueryRowContext(ctx, query, email).Scan(
 		// person attributes
-		&employee.Name,
-		&employee.Gender,
-		&employee.Street,
-		&employee.City,
-		&employee.Country,
-		&employee.CreatedAt,
-		&employee.ModifiedAt,
+		&employee.Name, &employee.Gender, &employee.Street, &employee.City, &employee.Country,
+		&employee.CreatedAt, &employee.ModifiedAt,
 		// employee attributes
-		&employee.ID,
-		&employee.HotelID,
-		&employee.Department,
-		&employee.ManagerID,
-		&employee.Salary,
-		&employee.SSN,
-		&employee.WorkEmail,
-		&employee.WorkPhone,
-		&employee.Password.hash,
-		&employee.Employed,
-		&employee.Activated,
+		&employee.ID, &employee.HotelID, &employee.Department, &employee.ManagerID, &employee.Salary, &employee.SSN,
+		&employee.WorkEmail, &employee.WorkPhone, &employee.Password.hash, &employee.Employed, &employee.Activated,
 		// role-specific attributes
-		&employee.Role,
-		&employee.HotelOwner,
-		&employee.Shift,
+		&employee.Role, &employee.HotelOwner, &employee.Shift,
 	)
-
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -247,38 +214,22 @@ func (m EmployeeModel) GetForToken(tokenScope, tokenPlaintext string) (*Employee
 	tokenHash := sha256.Sum256([]byte(tokenPlaintext))
 
 	query := `SELECT * FROM fn_get_employee_for_token($1, $2)`
-	var employee Employee
 
 	args := []any{tokenHash[:], tokenScope}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
+	var employee Employee
 	err := m.DB.QueryRowContext(ctx, query, args...).Scan(
 		// person attributes
-		&employee.Name,
-		&employee.Gender,
-		&employee.Street,
-		&employee.City,
-		&employee.Country,
-		&employee.CreatedAt,
-		&employee.ModifiedAt,
+		&employee.Name, &employee.Gender, &employee.Street, &employee.City, &employee.Country,
+		&employee.CreatedAt, &employee.ModifiedAt,
 		// employee attributes
-		&employee.ID,
-		&employee.HotelID,
-		&employee.Department,
-		&employee.ManagerID,
-		&employee.Salary,
-		&employee.SSN,
-		&employee.WorkEmail,
-		&employee.WorkPhone,
-		&employee.Password.hash,
-		&employee.Employed,
-		&employee.Activated,
+		&employee.ID, &employee.HotelID, &employee.Department, &employee.ManagerID, &employee.Salary, &employee.SSN,
+		&employee.WorkEmail, &employee.WorkPhone, &employee.Password.hash, &employee.Employed, &employee.Activated,
 		// role-specific attributes
-		&employee.Role,
-		&employee.HotelOwner,
-		&employee.Shift,
+		&employee.Role, &employee.HotelOwner, &employee.Shift,
 	)
 	if err != nil {
 		switch {
@@ -295,8 +246,7 @@ func (m EmployeeModel) GetForToken(tokenScope, tokenPlaintext string) (*Employee
 // GetAll retrieves multiple employee records with optional role filter and pagination.
 func (m EmployeeModel) GetAll(role string, filters Filters) ([]*Employee, Metadata, error) {
 	query := fmt.Sprintf(`
-		SELECT *
-		FROM fn_get_employees($1)
+		SELECT * FROM fn_get_employees($1)
 		ORDER BY %s %s, id ASC
 		LIMIT $2 OFFSET $3`,
 		filters.sortColumn(),
@@ -321,29 +271,13 @@ func (m EmployeeModel) GetAll(role string, filters Filters) ([]*Employee, Metada
 		err := rows.Scan(
 			&totalRecords,
 			// person attributes
-			&employee.Name,
-			&employee.Gender,
-			&employee.Street,
-			&employee.City,
-			&employee.Country,
-			&employee.CreatedAt,
-			&employee.ModifiedAt,
+			&employee.Name, &employee.Gender, &employee.Street, &employee.City, &employee.Country,
+			&employee.CreatedAt, &employee.ModifiedAt,
 			// employee attributes
-			&employee.ID,
-			&employee.HotelID,
-			&employee.Department,
-			&employee.ManagerID,
-			&employee.Salary,
-			&employee.SSN,
-			&employee.WorkEmail,
-			&employee.WorkPhone,
-			&employee.Password.hash,
-			&employee.Employed,
-			&employee.Activated,
+			&employee.ID, &employee.HotelID, &employee.Department, &employee.ManagerID, &employee.Salary, &employee.SSN,
+			&employee.WorkEmail, &employee.WorkPhone, &employee.Password.hash, &employee.Employed, &employee.Activated,
 			// role-specific attributes
-			&employee.Role,
-			&employee.HotelOwner,
-			&employee.Shift,
+			&employee.Role, &employee.HotelOwner, &employee.Shift,
 		)
 		if err != nil {
 			return nil, Metadata{}, err
@@ -351,7 +285,6 @@ func (m EmployeeModel) GetAll(role string, filters Filters) ([]*Employee, Metada
 
 		employees = append(employees, &employee)
 	}
-
 	if err = rows.Err(); err != nil {
 		return nil, Metadata{}, err
 	}
@@ -362,34 +295,18 @@ func (m EmployeeModel) GetAll(role string, filters Filters) ([]*Employee, Metada
 
 // Update modifies an existing employee record (person + employee + role-specific).
 func (m EmployeeModel) Update(employee *Employee) error {
-	query := `
-	SELECT fn_update_employee(
+	query := `SELECT fn_update_employee(
     	$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19
 	)`
 
 	args := []any{
 		// person attributes
-		employee.Name,
-		employee.Gender,
-		employee.Street,
-		employee.City,
-		employee.Country,
+		employee.Name, employee.Gender, employee.Street, employee.City, employee.Country,
 		// employee attributes
-		employee.ID,
-		employee.HotelID,
-		employee.Department,
-		employee.ManagerID,
-		employee.Salary,
-		employee.SSN,
-		employee.WorkEmail,
-		employee.WorkPhone,
-		employee.Password.hash,
-		employee.Employed,
-		employee.Activated,
+		employee.ID, employee.HotelID, employee.Department, employee.ManagerID, employee.Salary, employee.SSN,
+		employee.WorkEmail, employee.WorkPhone, employee.Password.hash, employee.Employed, employee.Activated,
 		// role-specific attributes
-		employee.Role,
-		employee.HotelOwner,
-		employee.Shift,
+		employee.Role, employee.HotelOwner, employee.Shift,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -408,12 +325,10 @@ func (m EmployeeModel) Update(employee *Employee) error {
 			return err
 		}
 	}
-
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}
@@ -423,9 +338,7 @@ func (m EmployeeModel) Update(employee *Employee) error {
 
 // Delete removes an employee record by id.
 func (m EmployeeModel) Delete(id int64) error {
-	query := `
-		DELETE FROM person
-		WHERE id = $1`
+	query := `DELETE FROM person WHERE id = $1`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -434,12 +347,10 @@ func (m EmployeeModel) Delete(id int64) error {
 	if err != nil {
 		return err
 	}
-
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}

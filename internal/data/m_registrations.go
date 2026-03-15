@@ -31,7 +31,7 @@ type RegistrationModel struct {
 
 // Insert creates a registration record.
 func (m RegistrationModel) Insert(r *Registration) error {
-	query := `SELECT fn_create_registration($1,$2,$3)`
+	query := `SELECT fn_create_registration($1, $2, $3)`
 
 	args := []any{r.ReservationID, r.HotelID, r.RoomNumber}
 
@@ -48,17 +48,12 @@ func (m RegistrationModel) Get(reservationID int64, hotelID int64, roomNumber in
 		SELECT reservation_id, hotel_id, room_number
 		FROM registration
 		WHERE reservation_id=$1 AND hotel_id=$2 AND room_number=$3`
-	var r Registration
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, reservationID, hotelID, roomNumber).Scan(
-		&r.ReservationID,
-		&r.HotelID,
-		&r.RoomNumber,
-	)
-
+	var r Registration
+	err := m.DB.QueryRowContext(ctx, query, reservationID, hotelID, roomNumber).Scan(&r.ReservationID, &r.HotelID, &r.RoomNumber)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -96,27 +91,18 @@ func (m RegistrationModel) GetAll(reservationID int64, filters Filters) ([]*Regi
 	totalRecords := 0
 	for rows.Next() {
 		var r Registration
-
-		err := rows.Scan(
-			&totalRecords,
-			&r.ReservationID,
-			&r.HotelID,
-			&r.RoomNumber,
-		)
-
+		err := rows.Scan(&totalRecords, &r.ReservationID, &r.HotelID, &r.RoomNumber)
 		if err != nil {
 			return nil, Metadata{}, err
 		}
 
 		registrations = append(registrations, &r)
 	}
-
 	if err = rows.Err(); err != nil {
 		return nil, Metadata{}, err
 	}
 
 	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
-
 	return registrations, metadata, nil
 }
 
@@ -136,12 +122,10 @@ func (m RegistrationModel) Update(reservationID int64, hotelID int64, roomNumber
 	if err != nil {
 		return err
 	}
-
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}
@@ -162,12 +146,10 @@ func (m RegistrationModel) Delete(reservationID int64, hotelID int64, roomNumber
 	if err != nil {
 		return err
 	}
-
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}

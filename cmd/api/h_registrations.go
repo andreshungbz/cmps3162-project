@@ -118,10 +118,7 @@ func (app *application) listRegistrationsHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	app.writeJSON(w, http.StatusOK, envelope{
-		"registrations": registrations,
-		"metadata":      metadata,
-	}, nil)
+	app.writeJSON(w, http.StatusOK, envelope{"registrations": registrations, "metadata": metadata}, nil)
 }
 
 // updateRegistrationHandler calls Registration.Update.

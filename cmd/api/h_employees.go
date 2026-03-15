@@ -212,6 +212,7 @@ func (app *application) updateEmployeeHandler(w http.ResponseWriter, r *http.Req
 		app.badRequestResponse(w, r, err)
 		return
 	}
+
 	// person attributes
 	if input.Name != nil {
 		employee.Name = *input.Name
@@ -251,7 +252,6 @@ func (app *application) updateEmployeeHandler(w http.ResponseWriter, r *http.Req
 	if input.WorkPhone != nil {
 		employee.WorkPhone = *input.WorkPhone
 	}
-
 	// generate password hash
 	if input.Password != nil {
 		err = employee.Password.Set(*input.Password)
@@ -260,7 +260,6 @@ func (app *application) updateEmployeeHandler(w http.ResponseWriter, r *http.Req
 			return
 		}
 	}
-
 	if input.Employed != nil {
 		employee.Employed = *input.Employed
 	}

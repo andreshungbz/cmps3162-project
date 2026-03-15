@@ -12,13 +12,14 @@ import (
 
 // Room maps the room entity.
 type Room struct {
+	// room attributes
 	HotelID    int64     `json:"hotel_id"`
 	Number     int       `json:"number"`
 	RoomTypeID int       `json:"-"`
 	Floor      int       `json:"floor"`
 	StatusCode string    `json:"status_code"`
 	ModifiedAt time.Time `json:"modified_at"`
-
+	// additional entities
 	RoomType           RoomType             `json:"room_type,omitzero"`
 	HousekeepingTasks  []*HousekeepingTask  `json:"housekeeping_tasks,omitempty"`
 	MaintenanceReports []*MaintenanceReport `json:"maintenance_reports,omitempty"`
@@ -45,13 +46,7 @@ func (m RoomModel) Insert(r *Room) error {
 		VALUES ($1, $2, $3, $4, $5)
 		RETURNING modified_at`
 
-	args := []any{
-		r.HotelID,
-		r.Number,
-		r.RoomTypeID,
-		r.Floor,
-		r.StatusCode,
-	}
+	args := []any{r.HotelID, r.Number, r.RoomTypeID, r.Floor, r.StatusCode}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -63,41 +58,20 @@ func (m RoomModel) Insert(r *Room) error {
 func (m RoomModel) Get(hotelID int64, number int) (*Room, error) {
 	query := `
 		SELECT
-			r.hotel_id,
-			r.number,
-			r.room_type_id,
-			r.floor,
-			r.status_code,
-			r.modified_at,
-			rt.id,
-			rt.title,
-			rt.base_rate,
-			rt.max_occupancy,
-			rt.bed_count,
-			rt.has_balcony
+			r.hotel_id, r.number, r.room_type_id, r.floor, r.status_code, r.modified_at,
+			rt.id, rt.title, rt.base_rate, rt.max_occupancy, rt.bed_count, rt.has_balcony
 		FROM room r
 		JOIN room_type rt ON r.room_type_id = rt.id
 		WHERE r.hotel_id = $1 AND r.number = $2`
-	var r Room
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
+	var r Room
 	err := m.DB.QueryRowContext(ctx, query, hotelID, number).Scan(
-		&r.HotelID,
-		&r.Number,
-		&r.RoomTypeID,
-		&r.Floor,
-		&r.StatusCode,
-		&r.ModifiedAt,
-		&r.RoomType.ID,
-		&r.RoomType.Title,
-		&r.RoomType.BaseRate,
-		&r.RoomType.MaxOccupancy,
-		&r.RoomType.BedCount,
-		&r.RoomType.HasBalcony,
+		&r.HotelID, &r.Number, &r.RoomTypeID, &r.Floor, &r.StatusCode, &r.ModifiedAt,
+		&r.RoomType.ID, &r.RoomType.Title, &r.RoomType.BaseRate, &r.RoomType.MaxOccupancy, &r.RoomType.BedCount, &r.RoomType.HasBalcony,
 	)
-
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -107,26 +81,25 @@ func (m RoomModel) Get(hotelID int64, number int) (*Room, error) {
 		}
 	}
 
-	hktasks, _, err := (&HousekeepingTaskModel{DB: m.DB}).GetAll(
-		r.HotelID,
-		r.Number,
-		nil,
+	// get housekeeping tasks
+	tasks, _, err := (&HousekeepingTaskModel{DB: m.DB}).GetAll(
+		r.HotelID, r.Number, nil,
 		Filters{Page: 1, PageSize: 100, Sort: "-created_at", SortSafelist: []string{"-created_at"}},
 	)
 	if err != nil {
 		return nil, fmt.Errorf("fetch housekeeping tasks: %w", err)
 	}
-	r.HousekeepingTasks = hktasks
+	r.HousekeepingTasks = tasks
 
-	mreports, _, err := (&MaintenanceReportModel{DB: m.DB}).GetAll(
-		r.HotelID,
-		r.Number,
+	// get maintenance reports
+	reports, _, err := (&MaintenanceReportModel{DB: m.DB}).GetAll(
+		r.HotelID, r.Number,
 		Filters{Page: 1, PageSize: 100, Sort: "-created_at", SortSafelist: []string{"-created_at"}},
 	)
 	if err != nil {
 		return nil, fmt.Errorf("fetch maintenance reports: %w", err)
 	}
-	r.MaintenanceReports = mreports
+	r.MaintenanceReports = reports
 
 	return &r, nil
 }
@@ -136,18 +109,8 @@ func (m RoomModel) GetAll(hotelID int64, filters Filters) ([]*Room, Metadata, er
 	query := fmt.Sprintf(`
 		SELECT
 			count(*) OVER(),
-			r.hotel_id,
-			r.number,
-			r.room_type_id,
-			r.floor,
-			r.status_code,
-			r.modified_at,
-			rt.id,
-			rt.title,
-			rt.base_rate,
-			rt.max_occupancy,
-			rt.bed_count,
-			rt.has_balcony
+			r.hotel_id, r.number, r.room_type_id, r.floor, r.status_code, r.modified_at,
+			rt.id, rt.title, rt.base_rate, rt.max_occupancy, rt.bed_count, rt.has_balcony
 		FROM room r
 		JOIN room_type rt ON r.room_type_id = rt.id
 		WHERE r.hotel_id = $1
@@ -171,56 +134,42 @@ func (m RoomModel) GetAll(hotelID int64, filters Filters) ([]*Room, Metadata, er
 	rooms := []*Room{}
 	for rows.Next() {
 		var r Room
-
 		err := rows.Scan(
 			&totalRecords,
-			&r.HotelID,
-			&r.Number,
-			&r.RoomTypeID,
-			&r.Floor,
-			&r.StatusCode,
-			&r.ModifiedAt,
-			&r.RoomType.ID,
-			&r.RoomType.Title,
-			&r.RoomType.BaseRate,
-			&r.RoomType.MaxOccupancy,
-			&r.RoomType.BedCount,
-			&r.RoomType.HasBalcony,
+			&r.HotelID, &r.Number, &r.RoomTypeID, &r.Floor, &r.StatusCode, &r.ModifiedAt,
+			&r.RoomType.ID, &r.RoomType.Title, &r.RoomType.BaseRate, &r.RoomType.MaxOccupancy, &r.RoomType.BedCount, &r.RoomType.HasBalcony,
 		)
 		if err != nil {
 			return nil, Metadata{}, err
 		}
 
-		hktasks, _, err := (&HousekeepingTaskModel{DB: m.DB}).GetAll(
-			r.HotelID,
-			r.Number,
-			nil,
+		// get housekeeping tasks
+		tasks, _, err := (&HousekeepingTaskModel{DB: m.DB}).GetAll(
+			r.HotelID, r.Number, nil,
 			Filters{Page: 1, PageSize: 100, Sort: "-created_at", SortSafelist: []string{"-created_at"}},
 		)
 		if err != nil {
 			return nil, Metadata{}, fmt.Errorf("fetch housekeeping tasks: %w", err)
 		}
-		r.HousekeepingTasks = hktasks
+		r.HousekeepingTasks = tasks
 
-		mreports, _, err := (&MaintenanceReportModel{DB: m.DB}).GetAll(
-			r.HotelID,
-			r.Number,
+		// get maintenance reports
+		reports, _, err := (&MaintenanceReportModel{DB: m.DB}).GetAll(
+			r.HotelID, r.Number,
 			Filters{Page: 1, PageSize: 100, Sort: "-created_at", SortSafelist: []string{"-created_at"}},
 		)
 		if err != nil {
 			return nil, Metadata{}, fmt.Errorf("fetch maintenance reports: %w", err)
 		}
-		r.MaintenanceReports = mreports
+		r.MaintenanceReports = reports
 
 		rooms = append(rooms, &r)
 	}
-
 	if err = rows.Err(); err != nil {
 		return nil, Metadata{}, err
 	}
 
 	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
-
 	return rooms, metadata, nil
 }
 
@@ -228,19 +177,10 @@ func (m RoomModel) GetAll(hotelID int64, filters Filters) ([]*Room, Metadata, er
 func (m RoomModel) Update(r *Room) error {
 	query := `
 		UPDATE room
-		SET room_type_id=$1,
-			floor=$2,
-			status_code=$3,
-			modified_at=NOW()
+		SET room_type_id=$1, floor=$2, status_code=$3
 		WHERE hotel_id=$4 AND number=$5`
 
-	args := []any{
-		r.RoomTypeID,
-		r.Floor,
-		r.StatusCode,
-		r.HotelID,
-		r.Number,
-	}
+	args := []any{r.RoomTypeID, r.Floor, r.StatusCode, r.HotelID, r.Number}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -249,12 +189,10 @@ func (m RoomModel) Update(r *Room) error {
 	if err != nil {
 		return err
 	}
-
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}
@@ -273,12 +211,10 @@ func (m RoomModel) Delete(hotelID int64, number int) error {
 	if err != nil {
 		return err
 	}
-
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}

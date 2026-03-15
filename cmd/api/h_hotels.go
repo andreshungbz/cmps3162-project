@@ -166,7 +166,6 @@ func (app *application) updateHotelHandler(w http.ResponseWriter, r *http.Reques
 	}
 
 	v := validator.New()
-
 	if data.ValidateHotel(v, h); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return

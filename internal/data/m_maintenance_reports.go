@@ -12,14 +12,18 @@ import (
 
 // MaintenanceReport maps the maintenance_report entity.
 type MaintenanceReport struct {
-	ID            int64     `json:"id"`
-	HotelID       int64     `json:"hotel_id"`
-	RoomNumber    int       `json:"room_number"`
-	HousekeeperID int64     `json:"housekeeper_id"`
-	Description   string    `json:"description"`
-	Completed     bool      `json:"completed"`
-	CreatedAt     time.Time `json:"created_at"`
-	ModifiedAt    time.Time `json:"modified_at"`
+	// maintenance_report attribute
+	ID int64 `json:"id"`
+	// room attributes
+	HotelID    int64 `json:"hotel_id"`
+	RoomNumber int   `json:"room_number"`
+	// housekeeper attribute
+	HousekeeperID int64 `json:"housekeeper_id"`
+	// maintenance_report attributes
+	Description string    `json:"description"`
+	Completed   bool      `json:"completed"`
+	CreatedAt   time.Time `json:"created_at"`
+	ModifiedAt  time.Time `json:"modified_at"`
 }
 
 // ValidateMaintenanceReport performs validation checks for a maintenance_report record.
@@ -38,8 +42,7 @@ type MaintenanceReportModel struct {
 // Insert creates a maintenance_report record.
 func (m MaintenanceReportModel) Insert(r *MaintenanceReport) error {
 	query := `
-		INSERT INTO maintenance_report
-		(hotel_id, room_number, housekeeper_id, description)
+		INSERT INTO maintenance_report (hotel_id, room_number, housekeeper_id, description)
 		VALUES ($1, $2, $3, $4)
 		RETURNING id, created_at, modified_at, completed`
 
@@ -48,35 +51,23 @@ func (m MaintenanceReportModel) Insert(r *MaintenanceReport) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	return m.DB.QueryRowContext(ctx, query, args...).Scan(
-		&r.ID,
-		&r.CreatedAt,
-		&r.ModifiedAt,
-		&r.Completed,
-	)
+	return m.DB.QueryRowContext(ctx, query, args...).Scan(&r.ID, &r.CreatedAt, &r.ModifiedAt, &r.Completed)
 }
 
 // Get retrieves a single maintenance_report record by id.
 func (m MaintenanceReportModel) Get(id int64) (*MaintenanceReport, error) {
 	query := `
-		SELECT id, hotel_id, room_number, housekeeper_id, description,
-		    completed, created_at, modified_at
+		SELECT id, hotel_id, room_number, housekeeper_id, description, completed, created_at, modified_at
 		FROM maintenance_report
 		WHERE id=$1`
-	var r MaintenanceReport
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
+	var r MaintenanceReport
 	err := m.DB.QueryRowContext(ctx, query, id).Scan(
-		&r.ID,
-		&r.HotelID,
-		&r.RoomNumber,
-		&r.HousekeeperID,
-		&r.Description,
-		&r.Completed,
-		&r.CreatedAt,
-		&r.ModifiedAt,
+		&r.ID, &r.HotelID, &r.RoomNumber, &r.HousekeeperID,
+		&r.Description, &r.Completed, &r.CreatedAt, &r.ModifiedAt,
 	)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -91,8 +82,7 @@ func (m MaintenanceReportModel) Get(id int64) (*MaintenanceReport, error) {
 // GetAll retrieves multiple maintenance_report records (filterable).
 func (m MaintenanceReportModel) GetAll(hotelID int64, roomNumber int, filters Filters) ([]*MaintenanceReport, Metadata, error) {
 	query := fmt.Sprintf(`
-		SELECT count(*) OVER(), id, hotel_id, room_number, housekeeper_id, description,
-		    completed, created_at, modified_at
+		SELECT count(*) OVER(), id, hotel_id, room_number, housekeeper_id, description, completed, created_at, modified_at
 		FROM maintenance_report
 		WHERE hotel_id=$1 AND room_number=$2
 		ORDER BY %s %s, id ASC
@@ -113,14 +103,15 @@ func (m MaintenanceReportModel) GetAll(hotelID int64, roomNumber int, filters Fi
 	totalRecords := 0
 	for rows.Next() {
 		var r MaintenanceReport
-		err := rows.Scan(&totalRecords, &r.ID, &r.HotelID, &r.RoomNumber, &r.HousekeeperID,
-			&r.Description, &r.Completed, &r.CreatedAt, &r.ModifiedAt)
+		err := rows.Scan(
+			&totalRecords, &r.ID, &r.HotelID, &r.RoomNumber, &r.HousekeeperID,
+			&r.Description, &r.Completed, &r.CreatedAt, &r.ModifiedAt,
+		)
 		if err != nil {
 			return nil, Metadata{}, err
 		}
 		reports = append(reports, &r)
 	}
-
 	if err = rows.Err(); err != nil {
 		return nil, Metadata{}, err
 	}
@@ -133,9 +124,7 @@ func (m MaintenanceReportModel) GetAll(hotelID int64, roomNumber int, filters Fi
 func (m MaintenanceReportModel) Update(r *MaintenanceReport) error {
 	query := `
 		UPDATE maintenance_report
-		SET description=$1,
-		    completed=$2,
-		    modified_at=NOW()
+		SET description=$1, completed=$2, modified_at=NOW()
 		WHERE id=$3`
 
 	args := []any{r.Description, r.Completed, r.ID}
@@ -147,7 +136,6 @@ func (m MaintenanceReportModel) Update(r *MaintenanceReport) error {
 	if err != nil {
 		return err
 	}
-
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
@@ -155,6 +143,7 @@ func (m MaintenanceReportModel) Update(r *MaintenanceReport) error {
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}
+
 	return nil
 }
 
@@ -175,5 +164,6 @@ func (m MaintenanceReportModel) Delete(id int64) error {
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}
+
 	return nil
 }

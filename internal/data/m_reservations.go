@@ -48,13 +48,8 @@ func (m ReservationModel) Insert(r *Reservation, roomTypeID int, hotelID int) (i
 	query := `SELECT fn_create_reservation_workflow($1, $2, $3, $4, $5, $6, $7, $8)`
 
 	args := []any{
-		r.GuestID,
-		r.CheckinDate,
-		r.CheckoutDate,
-		r.PaymentMethod,
-		r.Source,
-		hotelID,
-		roomTypeID,
+		r.GuestID, r.CheckinDate, r.CheckoutDate, r.PaymentMethod, r.Source,
+		hotelID, roomTypeID,
 		nil, // new reservation, no existing id
 	}
 
@@ -73,25 +68,15 @@ func (m ReservationModel) Insert(r *Reservation, roomTypeID int, hotelID int) (i
 // Get retrieves a single reservation along with its registrations.
 func (m ReservationModel) Get(id int64) (*Reservation, error) {
 	query := `SELECT * FROM reservation WHERE id=$1`
-	var r Reservation
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
+	var r Reservation
 	err := m.DB.QueryRowContext(ctx, query, id).Scan(
-		&r.ID,
-		&r.GuestID,
-		&r.CheckinDate,
-		&r.CheckoutDate,
-		&r.PaymentAmount,
-		&r.PaymentMethod,
-		&r.Source,
-		&r.Completed,
-		&r.Canceled,
-		&r.CreatedAt,
-		&r.ModifiedAt,
+		&r.ID, &r.GuestID, &r.CheckinDate, &r.CheckoutDate, &r.PaymentAmount, &r.PaymentMethod, &r.Source,
+		&r.Completed, &r.Canceled, &r.CreatedAt, &r.ModifiedAt,
 	)
-
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -118,8 +103,7 @@ func (m ReservationModel) Get(id int64) (*Reservation, error) {
 // GetAll retrieves all reservations with optional pagination.
 func (m ReservationModel) GetAll(filters Filters) ([]*Reservation, Metadata, error) {
 	query := fmt.Sprintf(`
-		SELECT count(*) OVER(), *
-		FROM reservation
+		SELECT count(*) OVER(), * FROM reservation
 		ORDER BY %s %s
 		LIMIT $1 OFFSET $2`,
 		filters.sortColumn(), filters.sortDirection())
@@ -142,17 +126,8 @@ func (m ReservationModel) GetAll(filters Filters) ([]*Reservation, Metadata, err
 		err := rows.Scan(
 			&totalRecords,
 			// reservation attributes
-			&r.ID,
-			&r.GuestID,
-			&r.CheckinDate,
-			&r.CheckoutDate,
-			&r.PaymentAmount,
-			&r.PaymentMethod,
-			&r.Source,
-			&r.Completed,
-			&r.Canceled,
-			&r.CreatedAt,
-			&r.ModifiedAt,
+			&r.ID, &r.GuestID, &r.CheckinDate, &r.CheckoutDate, &r.PaymentAmount, &r.PaymentMethod, &r.Source,
+			&r.Completed, &r.Canceled, &r.CreatedAt, &r.ModifiedAt,
 		)
 		if err != nil {
 			return nil, Metadata{}, err
@@ -161,8 +136,7 @@ func (m ReservationModel) GetAll(filters Filters) ([]*Reservation, Metadata, err
 		// get registrations
 		regModel := RegistrationModel{DB: m.DB}
 		regs, _, err := regModel.GetAll(
-			r.ID,
-			Filters{Page: 1, PageSize: 1000, Sort: "room_number", SortSafelist: []string{"room_number"}},
+			r.ID, Filters{Page: 1, PageSize: 1000, Sort: "room_number", SortSafelist: []string{"room_number"}},
 		)
 		if err != nil {
 			return nil, Metadata{}, err
@@ -188,16 +162,7 @@ func (m ReservationModel) Update(r *Reservation) error {
 		    payment_method=$4, source=$5, completed=$6, canceled=$7
 		WHERE id=$8`
 
-	args := []any{
-		r.CheckinDate,
-		r.CheckoutDate,
-		r.PaymentAmount,
-		r.PaymentMethod,
-		r.Source,
-		r.Completed,
-		r.Canceled,
-		r.ID,
-	}
+	args := []any{r.CheckinDate, r.CheckoutDate, r.PaymentAmount, r.PaymentMethod, r.Source, r.Completed, r.Canceled, r.ID}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -206,12 +171,10 @@ func (m ReservationModel) Update(r *Reservation) error {
 	if err != nil {
 		return err
 	}
-
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}
@@ -230,12 +193,10 @@ func (m ReservationModel) Delete(id int64) error {
 	if err != nil {
 		return err
 	}
-
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}

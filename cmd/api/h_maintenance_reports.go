@@ -125,15 +125,13 @@ func (app *application) listMaintenanceReportsHandler(w http.ResponseWriter, r *
 		roomNumber,
 		input.Filters,
 	)
+
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
-	app.writeJSON(w, http.StatusOK, envelope{
-		"maintenance_reports": reports,
-		"metadata":            metadata,
-	}, nil)
+	app.writeJSON(w, http.StatusOK, envelope{"maintenance_reports": reports, "metadata": metadata}, nil)
 }
 
 // updateMaintenanceReportHandler calls MaintenanceReport.Update.
@@ -170,7 +168,6 @@ func (app *application) updateMaintenanceReportHandler(w http.ResponseWriter, r 
 	if input.Description != nil {
 		report.Description = *input.Description
 	}
-
 	if input.Completed != nil {
 		report.Completed = *input.Completed
 	}

@@ -126,21 +126,13 @@ func (app *application) listHousekeepingTasksHandler(w http.ResponseWriter, r *h
 		return
 	}
 
-	tasks, metadata, err := app.models.HousekeepingTask.GetAll(
-		hotelID,
-		roomNumber,
-		input.HousekeeperID,
-		input.Filters,
-	)
+	tasks, metadata, err := app.models.HousekeepingTask.GetAll(hotelID, roomNumber, input.HousekeeperID, input.Filters)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
-	app.writeJSON(w, http.StatusOK, envelope{
-		"housekeeping_tasks": tasks,
-		"metadata":           metadata,
-	}, nil)
+	app.writeJSON(w, http.StatusOK, envelope{"housekeeping_tasks": tasks, "metadata": metadata}, nil)
 }
 
 // updateHousekeepingTaskHandler calls HousekeepingTask.Update.
@@ -178,11 +170,9 @@ func (app *application) updateHousekeepingTaskHandler(w http.ResponseWriter, r *
 	if input.HousekeeperID != nil {
 		task.HousekeeperID = input.HousekeeperID
 	}
-
 	if input.TaskType != nil {
 		task.TaskType = *input.TaskType
 	}
-
 	if input.Completed != nil {
 		task.Completed = *input.Completed
 	}

@@ -43,14 +43,7 @@ func (m HotelModel) Insert(h *Hotel) error {
 		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING id`
 
-	args := []any{
-		h.Name,
-		h.Street,
-		h.City,
-		h.State,
-		h.Country,
-		h.Phone,
-	}
+	args := []any{h.Name, h.Street, h.City, h.State, h.Country, h.Phone}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -64,21 +57,12 @@ func (m HotelModel) Get(id int64) (*Hotel, error) {
 		SELECT id, name, street, city, state, country, phone
 		FROM hotel
 		WHERE id = $1`
-	var h Hotel
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, id).Scan(
-		&h.ID,
-		&h.Name,
-		&h.Street,
-		&h.City,
-		&h.State,
-		&h.Country,
-		&h.Phone,
-	)
-
+	var h Hotel
+	err := m.DB.QueryRowContext(ctx, query, id).Scan(&h.ID, &h.Name, &h.Street, &h.City, &h.State, &h.Country, &h.Phone)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -95,13 +79,7 @@ func (m HotelModel) Get(id int64) (*Hotel, error) {
 func (m HotelModel) GetAll(name string, filters Filters) ([]*Hotel, Metadata, error) {
 	query := fmt.Sprintf(`
 		SELECT count(*) OVER(),
-			id,
-			name,
-			street,
-			city,
-			state,
-			country,
-			phone
+			id, name, street, city, state, country, phone
 		FROM hotel
 		WHERE (to_tsvector('simple', name) @@ plainto_tsquery('simple', $1) OR $1 = '')
 		ORDER BY %s %s, id ASC
@@ -124,30 +102,18 @@ func (m HotelModel) GetAll(name string, filters Filters) ([]*Hotel, Metadata, er
 	hotels := []*Hotel{}
 	for rows.Next() {
 		var h Hotel
-
-		err := rows.Scan(
-			&totalRecords,
-			&h.ID,
-			&h.Name,
-			&h.Street,
-			&h.City,
-			&h.State,
-			&h.Country,
-			&h.Phone,
-		)
+		err := rows.Scan(&totalRecords, &h.ID, &h.Name, &h.Street, &h.City, &h.State, &h.Country, &h.Phone)
 		if err != nil {
 			return nil, Metadata{}, err
 		}
 
 		hotels = append(hotels, &h)
 	}
-
 	if err = rows.Err(); err != nil {
 		return nil, Metadata{}, err
 	}
 
 	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
-
 	return hotels, metadata, nil
 }
 
@@ -155,23 +121,10 @@ func (m HotelModel) GetAll(name string, filters Filters) ([]*Hotel, Metadata, er
 func (m HotelModel) Update(h *Hotel) error {
 	query := `
 		UPDATE hotel
-		SET name=$1,
-			street=$2,
-			city=$3,
-			state=$4,
-			country=$5,
-			phone=$6
+		SET name=$1, street=$2, city=$3, state=$4, country=$5, phone=$6
 		WHERE id=$7`
 
-	args := []any{
-		h.Name,
-		h.Street,
-		h.City,
-		h.State,
-		h.Country,
-		h.Phone,
-		h.ID,
-	}
+	args := []any{h.Name, h.Street, h.City, h.State, h.Country, h.Phone, h.ID}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -180,12 +133,10 @@ func (m HotelModel) Update(h *Hotel) error {
 	if err != nil {
 		return err
 	}
-
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}
@@ -204,12 +155,10 @@ func (m HotelModel) Delete(id int64) error {
 	if err != nil {
 		return err
 	}
-
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
 	}
