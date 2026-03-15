@@ -7,16 +7,16 @@
 -- ====================================================================================
 
 CREATE OR REPLACE FUNCTION fn_create_guest(
-    -- guest attributes
-    p_passport TEXT,
-    p_contact_email CITEXT,
-    p_contact_phone TEXT,
     -- person attributes
     p_name TEXT,
     p_gender TEXT,
     p_street TEXT,
     p_city TEXT,
-    p_country TEXT
+    p_country TEXT,
+    -- guest attributes
+    p_passport TEXT,
+    p_contact_email CITEXT,
+    p_contact_phone TEXT
 )
 RETURNS TABLE (
     id BIGINT,
@@ -51,40 +51,94 @@ $$ LANGUAGE plpgsql;
 -- guest by their passport.
 -- ====================================================================================
 
-CREATE OR REPLACE FUNCTION fn_get_guest(
+CREATE OR REPLACE FUNCTION fn_get_guest_by_passport(
     p_passport TEXT
 )
 RETURNS TABLE (
-    id BIGINT,
-    passport_number TEXT,
-    contact_email CITEXT,
-    contact_phone TEXT,
+    -- person attributes
     name TEXT,
     gender TEXT,
     street TEXT,
     city TEXT,
     country TEXT,
     created_at TIMESTAMP(0) WITH TIME ZONE,
-    modified_at TIMESTAMP(0) WITH TIME ZONE
+    modified_at TIMESTAMP(0) WITH TIME ZONE,
+    -- guest attributes
+    id BIGINT,
+    passport_number TEXT,
+    contact_email CITEXT,
+    contact_phone TEXT
 )
 AS $$
 BEGIN
     RETURN QUERY
     SELECT
-        g.id,
-        g.passport_number,
-        g.contact_email,
-        g.contact_phone,
+        -- person attributes
         p.name,
         p.gender,
         p.street,
         p.city,
         p.country,
         p.created_at,
-        p.modified_at
+        p.modified_at,
+        -- guest attributes
+        g.id,
+        g.passport_number,
+        g.contact_email,
+        g.contact_phone
     FROM guest g
     JOIN person p ON p.id = g.id
     WHERE g.passport_number = p_passport;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ====================================================================================
+-- READ FUNCTION fn_get_guests returns guest and person data with optional
+-- name and country search filters.
+-- ====================================================================================
+
+CREATE OR REPLACE FUNCTION fn_get_guests(
+    p_name_search TEXT,
+    p_country_search TEXT
+)
+RETURNS TABLE (
+    total_records BIGINT,
+    -- person attributes
+    name TEXT,
+    gender TEXT,
+    street TEXT,
+    city TEXT,
+    country TEXT,
+    created_at TIMESTAMP(0) WITH TIME ZONE,
+    modified_at TIMESTAMP(0) WITH TIME ZONE,
+    -- guest attributes
+    id BIGINT,
+    passport_number TEXT,
+    contact_email CITEXT,
+    contact_phone TEXT
+)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        count(*) OVER(),
+        -- person attributes
+        p.name,
+        p.gender,
+        p.street,
+        p.city,
+        p.country,
+        p.created_at,
+        p.modified_at,
+        -- guest attributes
+        g.id,
+        g.passport_number,
+        g.contact_email,
+        g.contact_phone
+    FROM guest g
+    JOIN person p ON p.id = g.id
+    WHERE (to_tsvector('simple', p.name) @@ plainto_tsquery('simple', p_name_search) OR p_name_search = '')
+    AND (to_tsvector('simple', p.country) @@ plainto_tsquery('simple', p_country_search) OR p_country_search = '');
 END;
 $$ LANGUAGE plpgsql;
 
@@ -94,16 +148,16 @@ $$ LANGUAGE plpgsql;
 -- ====================================================================================
 
 CREATE OR REPLACE FUNCTION fn_update_guest(
-    p_passport TEXT,
-    -- guest attributes
-    p_contact_email CITEXT,
-    p_contact_phone TEXT,
     -- person attributes
     p_name TEXT,
     p_gender TEXT,
     p_street TEXT,
     p_city TEXT,
-    p_country TEXT
+    p_country TEXT,
+    -- guest attributes
+    p_passport TEXT,
+    p_contact_email CITEXT,
+    p_contact_phone TEXT
 )
 RETURNS VOID
 AS $$

@@ -1,0 +1,9 @@
+$kind: http-request
+name: remove
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/guests/A1234567"
+method: DELETE
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_FD_AUTH_TOKEN}}"
+order: 4490076469354738

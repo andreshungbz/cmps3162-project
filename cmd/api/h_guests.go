@@ -15,14 +15,16 @@ func (app *application) createGuestHandler(w http.ResponseWriter, r *http.Reques
 	// Read JSON input into a Guest
 
 	var input struct {
+		// person attributes
+		Name    string `json:"name"`
+		Gender  string `json:"gender"`
+		Street  string `json:"street"`
+		City    string `json:"city"`
+		Country string `json:"country"`
+		// guest attributes
 		PassportNumber string `json:"passport_number"`
 		ContactEmail   string `json:"contact_email"`
 		ContactPhone   string `json:"contact_phone"`
-		Name           string `json:"name"`
-		Gender         string `json:"gender"`
-		Street         string `json:"street"`
-		City           string `json:"city"`
-		Country        string `json:"country"`
 	}
 
 	err := app.readJSON(w, r, &input)
@@ -32,14 +34,16 @@ func (app *application) createGuestHandler(w http.ResponseWriter, r *http.Reques
 	}
 
 	guest := &data.Guest{
+		// person attributes
+		Name:    input.Name,
+		Gender:  input.Gender,
+		Street:  input.Street,
+		City:    input.City,
+		Country: input.Country,
+		// guest attributes
 		PassportNumber: input.PassportNumber,
 		ContactEmail:   input.ContactEmail,
 		ContactPhone:   input.ContactPhone,
-		Name:           input.Name,
-		Gender:         input.Gender,
-		Street:         input.Street,
-		City:           input.City,
-		Country:        input.Country,
 	}
 
 	// validate
@@ -52,7 +56,13 @@ func (app *application) createGuestHandler(w http.ResponseWriter, r *http.Reques
 	// insert into database
 	err = app.models.Guest.Insert(guest)
 	if err != nil {
-		app.serverErrorResponse(w, r, err)
+		switch {
+		case errors.Is(err, data.ErrDuplicatePassport):
+			v.AddError("passport_number", "a guest with this passport number already exists")
+			app.failedValidationResponse(w, r, v.Errors)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
 		return
 	}
 
@@ -78,7 +88,7 @@ func (app *application) showGuestHandler(w http.ResponseWriter, r *http.Request)
 	}
 
 	// retrieve guest from database
-	guest, err := app.models.Guest.Get(passport)
+	guest, err := app.models.Guest.GetByPassport(passport)
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
@@ -152,7 +162,7 @@ func (app *application) updateGuestHandler(w http.ResponseWriter, r *http.Reques
 	}
 
 	// retrieve guest from database
-	guest, err := app.models.Guest.Get(passport)
+	guest, err := app.models.Guest.GetByPassport(passport)
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
@@ -166,13 +176,16 @@ func (app *application) updateGuestHandler(w http.ResponseWriter, r *http.Reques
 	// Read JSON input
 
 	var input struct {
-		ContactEmail *string `json:"contact_email"`
-		ContactPhone *string `json:"contact_phone"`
-		Name         *string `json:"name"`
-		Gender       *string `json:"gender"`
-		Street       *string `json:"street"`
-		City         *string `json:"city"`
-		Country      *string `json:"country"`
+		// person attributes
+		Name    *string `json:"name"`
+		Gender  *string `json:"gender"`
+		Street  *string `json:"street"`
+		City    *string `json:"city"`
+		Country *string `json:"country"`
+		// guest attributes
+		PassportNumber *string `json:"passport_number"`
+		ContactEmail   *string `json:"contact_email"`
+		ContactPhone   *string `json:"contact_phone"`
 	}
 
 	err = app.readJSON(w, r, &input)
@@ -181,12 +194,7 @@ func (app *application) updateGuestHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	if input.ContactEmail != nil {
-		guest.ContactEmail = *input.ContactEmail
-	}
-	if input.ContactPhone != nil {
-		guest.ContactPhone = *input.ContactPhone
-	}
+	// person attributes
 	if input.Name != nil {
 		guest.Name = *input.Name
 	}
@@ -203,6 +211,17 @@ func (app *application) updateGuestHandler(w http.ResponseWriter, r *http.Reques
 		guest.Country = *input.Country
 	}
 
+	// guest attributes
+	if input.PassportNumber != nil {
+		guest.PassportNumber = *input.PassportNumber
+	}
+	if input.ContactEmail != nil {
+		guest.ContactEmail = *input.ContactEmail
+	}
+	if input.ContactPhone != nil {
+		guest.ContactPhone = *input.ContactPhone
+	}
+
 	// validate
 	v := validator.New()
 	if data.ValidateGuest(v, guest); !v.Valid() {
@@ -216,6 +235,9 @@ func (app *application) updateGuestHandler(w http.ResponseWriter, r *http.Reques
 		switch {
 		case errors.Is(err, data.ErrEditConflict):
 			app.editConflictResponse(w, r)
+		case errors.Is(err, data.ErrDuplicatePassport):
+			v.AddError("passport_number", "a guest with this passport number already exists")
+			app.failedValidationResponse(w, r, v.Errors)
 		default:
 			app.serverErrorResponse(w, r, err)
 		}

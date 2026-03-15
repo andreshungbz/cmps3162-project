@@ -1,0 +1,22 @@
+$kind: http-request
+name: update
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/guests/A1234567"
+method: PUT
+body:
+  type: json
+  content: |-
+    {
+        "name": "Mae Smith",
+        "gender": "F",
+        "street": "12 Oak St",
+        "city": "Belize City",
+        "country": "Belize",
+        "passport_number": "A1234567",
+        "contact_email": "mae@newexample.com",
+        "contact_phone": "501-111-1234"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_FD_AUTH_TOKEN}}"
+order: 4484494047813882

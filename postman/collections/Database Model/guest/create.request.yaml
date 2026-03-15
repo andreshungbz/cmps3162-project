@@ -1,0 +1,22 @@
+$kind: http-request
+name: create
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/guests"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "name": "Test Example",
+        "gender": "M",
+        "street": "67 Test Street",
+        "city": "Belmopan",
+        "country": "Belize",
+        "passport_number": "P0000000",
+        "contact_email": "test@example.com",
+        "contact_phone": "501-000-0000"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_FD_AUTH_TOKEN}}"
+order: 4475270631104536
