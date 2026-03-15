@@ -213,45 +213,6 @@ test/api/guests/delete:
 # ==================================================================================== #
 
 # GET
-.PHONY: test/api/registrations/get
-test/api/registrations/get:
-	curl -i http://localhost:4000/v1/registrations/2/1/102
-
-# GET ALL (registrations for a reservation)
-.PHONY: test/api/registrations/get-all
-test/api/registrations/get-all:
-	curl -i http://localhost:4000/v1/registrations/2
-
-# GET ALL (filters, pagination and sorting)
-.PHONY: test/api/registrations/get-all-filters
-test/api/registrations/get-all-filters:
-	curl -i "http://localhost:4000/v1/registrations/2?page=1&page_size=2&sort=-room_number"
-
-# POST
-.PHONY: test/api/registrations/post
-test/api/registrations/post:
-	curl -i -X POST http://localhost:4000/v1/registrations -d @test/registration/01-post.json
-
-# PUT
-.PHONY: test/api/registrations/put
-test/api/registrations/put:
-	curl -i -X PUT http://localhost:4000/v1/registrations/2/1/102 -d @test/registration/02-put.json
-
-# PATCH
-.PHONY: test/api/registrations/patch
-test/api/registrations/patch:
-	curl -i -X PATCH http://localhost:4000/v1/registrations/2/1/402 -d @test/registration/03-patch.json
-
-# DELETE
-.PHONY: test/api/registrations/delete
-test/api/registrations/delete:
-	curl -i -X DELETE http://localhost:4000/v1/registrations/2/1/102
-
-# ==================================================================================== #
-# Registration Model
-# ==================================================================================== #
-
-# GET
 .PHONY: test/api/reservations/get
 test/api/reservations/get:
 	curl -i http://localhost:4000/v1/reservations/2
