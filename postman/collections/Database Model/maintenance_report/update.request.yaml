@@ -1,0 +1,16 @@
+$kind: http-request
+name: update
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/maintenance_reports/4"
+method: PUT
+body:
+  type: json
+  content: |-
+    {
+      "description": "Light fixture wiring is bad",
+      "completed": true
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_HK_AUTH_TOKEN}}"
+order: 4287968450269971

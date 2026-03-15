@@ -1,0 +1,17 @@
+$kind: http-request
+name: create
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/hotels/1/rooms/101/mai\
+  ntenance_reports"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "housekeeper_id": 3,
+      "description": "Leaky faucet needs repair"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_HK_AUTH_TOKEN}}"
+order: 4252519583550226

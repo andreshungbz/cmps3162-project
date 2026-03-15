@@ -1,0 +1,9 @@
+$kind: http-request
+name: single
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/maintenance_reports/1"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_HK_AUTH_TOKEN}}"
+order: 1773553466307

@@ -1,0 +1,18 @@
+$kind: http-request
+name: multiple
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/hotels/1/rooms/101/mai\
+  ntenance_reports?page_size=&page=&sort="
+method: GET
+queryParams:
+  - key: page_size
+    value: ""
+  - key: page
+    value: ""
+  - key: sort
+    value: ""
+    description: "{id, description, completed, created_at}"
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_HK_AUTH_TOKEN}}"
+order: 3351462390663328
