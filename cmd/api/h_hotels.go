@@ -120,7 +120,7 @@ func (app *application) updateHotelHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	h, err := app.models.Hotel.Get(id)
+	hotel, err := app.models.Hotel.Get(id)
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
@@ -147,37 +147,37 @@ func (app *application) updateHotelHandler(w http.ResponseWriter, r *http.Reques
 	}
 
 	if input.Name != nil {
-		h.Name = *input.Name
+		hotel.Name = *input.Name
 	}
 	if input.Street != nil {
-		h.Street = *input.Street
+		hotel.Street = *input.Street
 	}
 	if input.City != nil {
-		h.City = *input.City
+		hotel.City = *input.City
 	}
 	if input.State != nil {
-		h.State = *input.State
+		hotel.State = *input.State
 	}
 	if input.Country != nil {
-		h.Country = *input.Country
+		hotel.Country = *input.Country
 	}
 	if input.Phone != nil {
-		h.Phone = *input.Phone
+		hotel.Phone = *input.Phone
 	}
 
 	v := validator.New()
-	if data.ValidateHotel(v, h); !v.Valid() {
+	if data.ValidateHotel(v, hotel); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
 
-	err = app.models.Hotel.Update(h)
+	err = app.models.Hotel.Update(hotel)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
-	app.writeJSON(w, http.StatusOK, envelope{"hotel": h}, nil)
+	app.writeJSON(w, http.StatusOK, envelope{"hotel": hotel}, nil)
 }
 
 // deleteHotelHandler calls Hotel.Delete.

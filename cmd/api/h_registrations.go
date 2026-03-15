@@ -167,13 +167,14 @@ func (app *application) updateRegistrationHandler(w http.ResponseWriter, r *http
 		return
 	}
 
-	reg, err := app.models.Registration.Get(reservationID, hotelID, input.RoomNumber)
+	// get updated registration
+	registration, err := app.models.Registration.Get(reservationID, hotelID, input.RoomNumber)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
-	app.writeJSON(w, http.StatusOK, envelope{"registration": reg}, nil)
+	app.writeJSON(w, http.StatusOK, envelope{"registration": registration}, nil)
 }
 
 // deleteRegistrationHandler calls Registration.Delete.

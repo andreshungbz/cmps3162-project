@@ -118,7 +118,7 @@ func (app *application) updateRoomTypeHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	rt, err := app.models.RoomType.Get(id)
+	roomType, err := app.models.RoomType.Get(id)
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
@@ -144,34 +144,34 @@ func (app *application) updateRoomTypeHandler(w http.ResponseWriter, r *http.Req
 	}
 
 	if input.Title != nil {
-		rt.Title = *input.Title
+		roomType.Title = *input.Title
 	}
 	if input.BaseRate != nil {
-		rt.BaseRate = *input.BaseRate
+		roomType.BaseRate = *input.BaseRate
 	}
 	if input.MaxOccupancy != nil {
-		rt.MaxOccupancy = *input.MaxOccupancy
+		roomType.MaxOccupancy = *input.MaxOccupancy
 	}
 	if input.BedCount != nil {
-		rt.BedCount = *input.BedCount
+		roomType.BedCount = *input.BedCount
 	}
 	if input.HasBalcony != nil {
-		rt.HasBalcony = *input.HasBalcony
+		roomType.HasBalcony = *input.HasBalcony
 	}
 
 	v := validator.New()
-	if data.ValidateRoomType(v, rt); !v.Valid() {
+	if data.ValidateRoomType(v, roomType); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
 
-	err = app.models.RoomType.Update(rt)
+	err = app.models.RoomType.Update(roomType)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
-	app.writeJSON(w, http.StatusOK, envelope{"room_type": rt}, nil)
+	app.writeJSON(w, http.StatusOK, envelope{"room_type": roomType}, nil)
 }
 
 // deleteRoomTypeHandler calls RoomType.Delete.
