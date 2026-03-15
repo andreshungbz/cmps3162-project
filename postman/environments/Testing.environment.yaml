@@ -1,20 +1,20 @@
 name: Testing
 values:
   - key: SERVER_ADDRESS
-    value: ''
+    value: 'http://localhost'
     enabled: true
   - key: SERVER_PORT
-    value: ''
+    value: '4000'
     enabled: true
   - key: API_VERSION
-    value: ''
+    value: v1
     enabled: true
   - key: TEST_OM_AUTH_TOKEN
-    value: ''
+    value: NTH5BYOPVS6WJ2XOK27W7Q6ZUH
     enabled: true
   - key: TEST_FD_AUTH_TOKEN
-    value: ''
+    value: UZPHDJXKVJORSLLQD7AH3QDCU3
     enabled: true
   - key: TEST_HK_AUTH_TOKEN
-    value: ''
+    value: UKAKGCKBNSDEJPYBN7S6LFZI3W
     enabled: true
