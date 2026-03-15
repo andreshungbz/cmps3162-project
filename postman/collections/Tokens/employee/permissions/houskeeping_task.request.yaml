@@ -3,5 +3,7 @@ name: houskeeping_task
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/housekeeping_tasks/1"
 method: GET
 auth:
-  type: noauth
+  type: bearer
+  credentials:
+    token: "{{TEST_HK_AUTH_TOKEN}}"
 order: 1773528420935

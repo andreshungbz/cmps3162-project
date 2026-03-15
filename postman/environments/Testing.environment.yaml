@@ -9,3 +9,12 @@ values:
   - key: API_VERSION
     value: ''
     enabled: true
+  - key: TEST_OM_AUTH_TOKEN
+    value: ''
+    enabled: true
+  - key: TEST_FD_AUTH_TOKEN
+    value: ''
+    enabled: true
+  - key: TEST_HK_AUTH_TOKEN
+    value: ''
+    enabled: true
