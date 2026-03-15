@@ -1,0 +1,9 @@
+$kind: http-request
+name: single
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/hotels/1/rooms/101"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
+order: 1773549826005

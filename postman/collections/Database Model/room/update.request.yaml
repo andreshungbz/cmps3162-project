@@ -1,0 +1,17 @@
+$kind: http-request
+name: update
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/hotels/1/rooms/101"
+method: PUT
+body:
+  type: json
+  content: |-
+    {
+      "room_type_id": 1,
+      "floor": 1,
+      "status_code": "O/D"
+    }
+auth:
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
+  type: bearer
+order: 4225443270745277

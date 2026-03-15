@@ -1,0 +1,18 @@
+$kind: http-request
+name: multiple
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/hotels/1/rooms?page_si\
+  ze=&page=&sort="
+method: GET
+queryParams:
+  - key: page_size
+    value: ""
+  - key: page
+    value: ""
+  - key: sort
+    value: ""
+    description: "{number, floor, status_code}"
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
+order: 2779377977073216
