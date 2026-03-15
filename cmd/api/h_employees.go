@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/andreshungbz/cmps3162-project/internal/data"
@@ -99,6 +100,9 @@ func (app *application) createEmployeeHandler(w http.ResponseWriter, r *http.Req
 	// 	app.serverErrorResponse(w, r, err)
 	// 	return
 	// }
+
+	headers := make(http.Header)
+	headers.Set("Location", fmt.Sprintf("/v1/employees/%s", employee.WorkEmail))
 
 	err = app.writeJSON(w, http.StatusCreated, envelope{"employee": employee}, nil)
 	if err != nil {

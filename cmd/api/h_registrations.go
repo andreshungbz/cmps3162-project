@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/andreshungbz/cmps3162-project/internal/data"
@@ -23,25 +24,28 @@ func (app *application) createRegistrationHandler(w http.ResponseWriter, r *http
 		return
 	}
 
-	reg := &data.Registration{
+	registration := &data.Registration{
 		ReservationID: input.ReservationID,
 		HotelID:       input.HotelID,
 		RoomNumber:    input.RoomNumber,
 	}
 
 	v := validator.New()
-	if data.ValidateRegistration(v, reg); !v.Valid() {
+	if data.ValidateRegistration(v, registration); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
 
-	err = app.models.Registration.Insert(reg)
+	err = app.models.Registration.Insert(registration)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
-	app.writeJSON(w, http.StatusCreated, envelope{"registration": reg}, nil)
+	headers := make(http.Header)
+	headers.Set("Location", fmt.Sprintf("/v1/guests/%d/%d/%d", registration.ReservationID, registration.HotelID, registration.RoomNumber))
+
+	app.writeJSON(w, http.StatusCreated, envelope{"registration": registration}, nil)
 }
 
 // showRegistrationHandler calls Registration.Get.

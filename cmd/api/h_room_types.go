@@ -26,7 +26,7 @@ func (app *application) createRoomTypeHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	rt := &data.RoomType{
+	roomType := &data.RoomType{
 		Title:        input.Title,
 		BaseRate:     input.BaseRate,
 		MaxOccupancy: input.MaxOccupancy,
@@ -35,21 +35,21 @@ func (app *application) createRoomTypeHandler(w http.ResponseWriter, r *http.Req
 	}
 
 	v := validator.New()
-	if data.ValidateRoomType(v, rt); !v.Valid() {
+	if data.ValidateRoomType(v, roomType); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
 
-	err = app.models.RoomType.Insert(rt)
+	err = app.models.RoomType.Insert(roomType)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
 	headers := make(http.Header)
-	headers.Set("Location", fmt.Sprintf("/v1/room_types/%d", rt.ID))
+	headers.Set("Location", fmt.Sprintf("/v1/room_types/%d", roomType.ID))
 
-	app.writeJSON(w, http.StatusCreated, envelope{"room_type": rt}, headers)
+	app.writeJSON(w, http.StatusCreated, envelope{"room_type": roomType}, headers)
 }
 
 // showRoomTypeHandler calls RoomType.Get.

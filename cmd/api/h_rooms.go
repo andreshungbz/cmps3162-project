@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/andreshungbz/cmps3162-project/internal/data"
@@ -55,6 +56,9 @@ func (app *application) createRoomHandler(w http.ResponseWriter, r *http.Request
 		app.serverErrorResponse(w, r, err)
 		return
 	}
+
+	headers := make(http.Header)
+	headers.Set("Location", fmt.Sprintf("/v1/hotels/%d/rooms/%d", room.HotelID, room.Number))
 
 	app.writeJSON(w, http.StatusCreated, envelope{"room": room}, nil)
 }

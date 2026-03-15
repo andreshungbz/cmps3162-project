@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/andreshungbz/cmps3162-project/internal/data"
@@ -58,6 +59,9 @@ func (app *application) createHousekeepingTaskHandler(w http.ResponseWriter, r *
 		app.serverErrorResponse(w, r, err)
 		return
 	}
+
+	headers := make(http.Header)
+	headers.Set("Location", fmt.Sprintf("/v1/housekeeping_tasks/%d", task.ID))
 
 	app.writeJSON(w, http.StatusCreated, envelope{"housekeeping_task": task}, nil)
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/andreshungbz/cmps3162-project/internal/data"
@@ -58,6 +59,9 @@ func (app *application) createMaintenanceReportHandler(w http.ResponseWriter, r 
 		app.serverErrorResponse(w, r, err)
 		return
 	}
+
+	headers := make(http.Header)
+	headers.Set("Location", fmt.Sprintf("/v1/maintenance_reports/%d", report.ID))
 
 	app.writeJSON(w, http.StatusCreated, envelope{"maintenance_report": report}, nil)
 }

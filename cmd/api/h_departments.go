@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/andreshungbz/cmps3162-project/internal/data"
@@ -22,24 +23,27 @@ func (app *application) createDepartmentHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	d := &data.Department{
+	department := &data.Department{
 		DeptName: input.DeptName,
 		Budget:   input.Budget,
 	}
 
 	v := validator.New()
-	if data.ValidateDepartment(v, d); !v.Valid() {
+	if data.ValidateDepartment(v, department); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
 
-	err = app.models.Department.Insert(d)
+	err = app.models.Department.Insert(department)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
-	app.writeJSON(w, http.StatusCreated, envelope{"department": d}, nil)
+	headers := make(http.Header)
+	headers.Set("Location", fmt.Sprintf("/v1/departments/%s", department.DeptName))
+
+	app.writeJSON(w, http.StatusCreated, envelope{"department": department}, nil)
 }
 
 // showDepartmentHandler calls Department.Get.
