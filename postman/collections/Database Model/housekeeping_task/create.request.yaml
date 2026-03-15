@@ -1,0 +1,17 @@
+$kind: http-request
+name: create
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/hotels/1/rooms/101/hou\
+  sekeeping_tasks"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "task_type": "bed",
+      "housekeeper_id": 3
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_HK_AUTH_TOKEN}}"
+order: 4401179758526959

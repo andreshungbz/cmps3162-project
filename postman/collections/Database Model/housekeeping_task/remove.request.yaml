@@ -1,0 +1,9 @@
+$kind: http-request
+name: remove
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/housekeeping_tasks/1"
+method: DELETE
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_HK_AUTH_TOKEN}}"
+order: 4483310338001358

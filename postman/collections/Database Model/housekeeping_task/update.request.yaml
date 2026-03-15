@@ -1,0 +1,17 @@
+$kind: http-request
+name: update
+url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/housekeeping_tasks/1"
+method: PUT
+body:
+  type: json
+  content: |-
+    {
+      "task_type": "bathroom",
+      "housekeeper_id": 3,
+      "completed": true
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_HK_AUTH_TOKEN}}"
+order: 4426288052099400
