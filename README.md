@@ -12,7 +12,7 @@
 ### Test 1 Deliverables
 
 - Entity-Relationship Diagrams (ERD) can be found in the `docs` folder located at https://github.com/andreshungbz/cmps3162-project/tree/main/docs.
-- Google Slides presentation can be found at {TODO}.
+- Google Slides presentation can be found at https://docs.google.com/presentation/d/1tE8GPZKjBMg3du9lbhShSSBfoenZ_GDl0b08cgz5pno/edit?usp=sharing.
 
 ### Running the Application
 
