@@ -1,5 +1,6 @@
 $kind: http-request
 name: multiple
+description: Retrieves multiple maintenance_report records (filterable).
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/hotels/1/rooms/101/mai\
   ntenance_reports?page_size=&page=&sort="
 method: GET

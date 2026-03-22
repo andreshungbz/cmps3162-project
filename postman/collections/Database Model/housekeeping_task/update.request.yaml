@@ -1,5 +1,6 @@
 $kind: http-request
 name: update
+description: Updates a housekeeping_task record.
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/housekeeping_tasks/1"
 method: PUT
 body:

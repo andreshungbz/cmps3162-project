@@ -1,3 +1,4 @@
 $kind: collection
 name: reservation
+description: Collection of requests demonstrating the API for the reservation entity.
 order: 4502531431594088

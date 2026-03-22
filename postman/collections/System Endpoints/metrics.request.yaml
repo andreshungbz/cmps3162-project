@@ -1,5 +1,6 @@
 $kind: http-request
 name: metrics
+description: Displays a number of server statistics on requests, responses, and performance.
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/observability/metrics"
 method: GET
 settings:

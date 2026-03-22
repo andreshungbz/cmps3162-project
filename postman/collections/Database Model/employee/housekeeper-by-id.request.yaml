@@ -1,5 +1,6 @@
 $kind: http-request
 name: housekeeper-by-id
+description: Retrieves a houskeeper employee by their ID.
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/housekeepers/3"
 method: GET
 auth:

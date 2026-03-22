@@ -1,0 +1,4 @@
+$kind: collection
+name: activation
+description: Collection of requests testing account activation.
+order: 3512093691334726

@@ -1,0 +1,4 @@
+$kind: collection
+name: authentication
+description: Collection of requests testing account authentication.
+order: 3782626053267081

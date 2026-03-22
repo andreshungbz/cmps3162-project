@@ -1,5 +1,5 @@
 $kind: http-request
-name: new-token
+description: Creates an activation token for an account.
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/tokens/activation"
 method: POST
 body:
@@ -8,5 +8,4 @@ body:
     {
         "work_email": "bea@grandoceanview.com"
     }
-examples: .resources/new-token.resources/examples
 order: 1773522999565

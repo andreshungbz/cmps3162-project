@@ -1,5 +1,6 @@
 $kind: http-request
 name: create
+description: Creates a room_type record.
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/room_types"
 method: POST
 body:

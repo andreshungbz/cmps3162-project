@@ -1,2 +1,4 @@
 $kind: collection
 name: System Endpoints
+description: This collection documents the miscellaneous API endpoints
+  concerning statistics on the system.

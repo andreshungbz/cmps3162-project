@@ -1,5 +1,6 @@
 $kind: http-request
 name: create
+description: Creates a houskeeping_task record.
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/hotels/1/rooms/101/hou\
   sekeeping_tasks"
 method: POST

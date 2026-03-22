@@ -1,3 +1,4 @@
 $kind: collection
 name: employee
+description: Collection of requests demonstrating the API for the employee entity.
 order: 4479368060832842

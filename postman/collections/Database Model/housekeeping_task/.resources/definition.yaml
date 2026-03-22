@@ -1,3 +1,4 @@
 $kind: collection
 name: housekeeping_task
+description: Collection of requests demonstrating the API for the housekeeping_task entity.
 order: 4493731173220000

@@ -1,4 +1,6 @@
 $kind: http-request
+name: activate
+description: Activates an account with an activation token.
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/activated/employees"
 method: PUT
 body:

@@ -1,3 +1,4 @@
 $kind: collection
 name: room
+description: Collection of requests demonstrating the API for the room entity.
 order: 4171734606407018

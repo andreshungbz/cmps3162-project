@@ -1,5 +1,6 @@
 $kind: http-request
 name: remove
+description: Removes a registration record.
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/registrations/2/1/201"
 method: DELETE
 auth:

@@ -1,3 +1,4 @@
 $kind: collection
 name: registration
+description: Collection of requests demonstrating the API for the registration entity.
 order: 4502771876288567

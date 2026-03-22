@@ -1,2 +1,7 @@
 $kind: collection
 name: Database Model
+description: This collection documents the complete REST API for each entity in
+  the Entity-Relationship Diagram (ERD). Full CRUD (Create, Read, Update,
+  Delete) is implemented to be thorough, although some like Delete are not
+  intended to be used very often, as the operation can cascade to other
+  entities.

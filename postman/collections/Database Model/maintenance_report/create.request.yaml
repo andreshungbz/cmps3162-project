@@ -1,5 +1,6 @@
 $kind: http-request
 name: create
+description: Creates a maintenance_report record.
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/hotels/1/rooms/101/mai\
   ntenance_reports"
 method: POST

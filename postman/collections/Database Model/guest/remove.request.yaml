@@ -1,5 +1,6 @@
 $kind: http-request
 name: remove
+description: Removes a guest record.
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/guests/A1234567"
 method: DELETE
 auth:

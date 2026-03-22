@@ -1,5 +1,6 @@
 $kind: http-request
 name: create_hk
+description: Creates an employee record (Housekeeper).
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/employees"
 method: POST
 body:

@@ -1,5 +1,6 @@
 $kind: http-request
 name: multiple
+description: Retrieves multiple reservation records (filterable).
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/reservations?page_size\
   =&page=&sort="
 method: GET

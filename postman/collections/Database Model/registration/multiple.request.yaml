@@ -1,5 +1,6 @@
 $kind: http-request
 name: multiple
+description: Retrieves multiple registration records (filterable).
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/registrations/2?page_s\
   ize=&page=&sort="
 method: GET

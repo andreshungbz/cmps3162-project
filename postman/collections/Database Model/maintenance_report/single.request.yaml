@@ -1,5 +1,6 @@
 $kind: http-request
 name: single
+description: Retrieves a single maintenance_report record.
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/maintenance_reports/1"
 method: GET
 auth:

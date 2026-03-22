@@ -1,5 +1,6 @@
 $kind: http-request
 name: multiple
+description: Retrieves multiple housekeeping_task records (filterable).
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/hotels/1/rooms/101/hou\
   sekeeping_tasks?housekeeper_id=&page_size=&page=&sort="
 method: GET

@@ -1,5 +1,6 @@
 $kind: http-request
 name: single
+description: Retrieves a single room record.
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/hotels/1/rooms/101"
 method: GET
 auth:

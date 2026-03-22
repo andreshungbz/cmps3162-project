@@ -1,3 +1,4 @@
 $kind: collection
 name: department
+description: Collection of requests demonstrating the API for the department entity.
 order: 2577716987131633

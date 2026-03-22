@@ -1,5 +1,6 @@
 $kind: http-request
 name: create_om
+description: Creates an employee record (Operations Manager).
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/employees"
 method: POST
 body:

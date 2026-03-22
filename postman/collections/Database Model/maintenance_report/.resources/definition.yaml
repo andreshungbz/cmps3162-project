@@ -1,3 +1,4 @@
 $kind: collection
 name: maintenance_report
+description: Collection of requests demonstraing the API for the maintenance_report entity.
 order: 4502148949991420

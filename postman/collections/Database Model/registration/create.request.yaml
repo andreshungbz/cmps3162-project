@@ -1,5 +1,6 @@
 $kind: http-request
 name: create
+description: Creates a registration record.
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/registrations"
 method: POST
 body:

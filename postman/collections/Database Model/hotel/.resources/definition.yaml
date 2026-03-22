@@ -1,3 +1,4 @@
 $kind: collection
 name: hotel
+description: Collection of requests demonstrating the API for the hotel entity.
 order: 1499209233596415

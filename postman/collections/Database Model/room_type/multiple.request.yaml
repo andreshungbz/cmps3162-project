@@ -1,5 +1,6 @@
 $kind: http-request
 name: multiple
+description: Retrieves multiple room_type records (filterable).
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/room_types/?title=&pag\
   e_size=&page=&sort="
 method: GET

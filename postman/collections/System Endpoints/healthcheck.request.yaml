@@ -1,6 +1,6 @@
 $kind: http-request
 name: healthcheck
-description: Checks the API server status and system information.
+description: Checks the server status and system information.
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/healthcheck"
 method: GET
 auth:

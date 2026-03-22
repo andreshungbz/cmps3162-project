@@ -1,5 +1,6 @@
 $kind: http-request
 name: multiple
+description: Retrieves mutliple guest records (filterable).
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/guests?name=&country=&\
   page_size=&page=&sort="
 method: GET

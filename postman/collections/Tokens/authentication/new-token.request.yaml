@@ -1,4 +1,6 @@
 $kind: http-request
+name: new-token
+description: Creates an authentication token for an account.
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/tokens/authentication"
 method: POST
 body:

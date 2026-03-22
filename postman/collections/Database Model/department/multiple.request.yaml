@@ -1,5 +1,6 @@
 $kind: http-request
 name: multiple
+description: Retrieves multiple department records (filterable).
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/departments?name=&page\
   _size=&page=&sort="
 method: GET

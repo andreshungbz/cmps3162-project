@@ -1,2 +1,4 @@
 $kind: collection
 name: Tokens
+description: This collection documents the requests involving the token-based
+  activation, authentication, and authorization implementation.
