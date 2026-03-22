@@ -108,8 +108,8 @@ func (app *application) routes() http.Handler {
 			app.recoverPanic(
 				app.enableCORS(
 					app.rateLimit(
-						app.authenticate(
-							app.gzip(router), // last middleware
+						app.gzip(
+							app.authenticate(router), // last middleware
 						),
 					),
 				),
