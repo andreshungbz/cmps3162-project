@@ -130,10 +130,10 @@ INSERT INTO guest (id, passport_number, contact_email, contact_phone)
 -- ROOM TYPE & ROOM
 -- ====================================================================================
 
-INSERT INTO room_type (title, base_rate, max_occupancy, bed_count, has_balcony) VALUES
-    ('Single', 100, 1, 1, FALSE),
-    ('Double', 150, 2, 2, FALSE),
-    ('Suite', 300, 4, 2, TRUE);
+INSERT INTO room_type (title, base_rate, max_occupancy, bed_count, amenities) VALUES
+    ('Single', 100, 1, 1, '{}'),
+    ('Double', 150, 2, 2, '{}'),
+    ('Suite', 300, 4, 2, ARRAY['balcony']);
 
 INSERT INTO room (hotel_id, number, room_type_id, floor, status_code) VALUES
     (1, 101, 1, 1, 'O/C'),

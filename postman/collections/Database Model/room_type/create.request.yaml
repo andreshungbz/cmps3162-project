@@ -11,7 +11,7 @@ body:
       "base_rate": 250.0,
       "max_occupancy": 4,
       "bed_count": 2,
-      "has_balcony": true
+      "amenities": ["balcony", "seaview"]
     }
 auth:
   type: bearer

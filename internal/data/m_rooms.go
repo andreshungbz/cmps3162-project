@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/andreshungbz/cmps3162-project/internal/validator"
+	"github.com/lib/pq"
 )
 
 // Room maps the room entity.
@@ -59,7 +60,7 @@ func (m RoomModel) Get(hotelID int64, number int) (*Room, error) {
 	query := `
 		SELECT
 			r.hotel_id, r.number, r.room_type_id, r.floor, r.status_code, r.modified_at,
-			rt.id, rt.title, rt.base_rate, rt.max_occupancy, rt.bed_count, rt.has_balcony
+			rt.id, rt.title, rt.base_rate, rt.max_occupancy, rt.bed_count, rt.amenities
 		FROM room r
 		JOIN room_type rt ON r.room_type_id = rt.id
 		WHERE r.hotel_id = $1 AND r.number = $2`
@@ -70,7 +71,7 @@ func (m RoomModel) Get(hotelID int64, number int) (*Room, error) {
 	var r Room
 	err := m.DB.QueryRowContext(ctx, query, hotelID, number).Scan(
 		&r.HotelID, &r.Number, &r.RoomTypeID, &r.Floor, &r.StatusCode, &r.ModifiedAt,
-		&r.RoomType.ID, &r.RoomType.Title, &r.RoomType.BaseRate, &r.RoomType.MaxOccupancy, &r.RoomType.BedCount, &r.RoomType.HasBalcony,
+		&r.RoomType.ID, &r.RoomType.Title, &r.RoomType.BaseRate, &r.RoomType.MaxOccupancy, &r.RoomType.BedCount, pq.Array(&r.RoomType.Amenities),
 	)
 	if err != nil {
 		switch {
@@ -110,7 +111,7 @@ func (m RoomModel) GetAll(hotelID int64, filters Filters) ([]*Room, Metadata, er
 		SELECT
 			count(*) OVER(),
 			r.hotel_id, r.number, r.room_type_id, r.floor, r.status_code, r.modified_at,
-			rt.id, rt.title, rt.base_rate, rt.max_occupancy, rt.bed_count, rt.has_balcony
+			rt.id, rt.title, rt.base_rate, rt.max_occupancy, rt.bed_count, rt.amenities
 		FROM room r
 		JOIN room_type rt ON r.room_type_id = rt.id
 		WHERE r.hotel_id = $1
@@ -137,7 +138,7 @@ func (m RoomModel) GetAll(hotelID int64, filters Filters) ([]*Room, Metadata, er
 		err := rows.Scan(
 			&totalRecords,
 			&r.HotelID, &r.Number, &r.RoomTypeID, &r.Floor, &r.StatusCode, &r.ModifiedAt,
-			&r.RoomType.ID, &r.RoomType.Title, &r.RoomType.BaseRate, &r.RoomType.MaxOccupancy, &r.RoomType.BedCount, &r.RoomType.HasBalcony,
+			&r.RoomType.ID, &r.RoomType.Title, &r.RoomType.BaseRate, &r.RoomType.MaxOccupancy, &r.RoomType.BedCount, pq.Array(&r.RoomType.Amenities),
 		)
 		if err != nil {
 			return nil, Metadata{}, err

@@ -11,7 +11,7 @@ body:
         "base_rate": 125,
         "max_occupancy": 1,
         "bed_count": 1,
-        "has_balcony": false
+        "amenities": []
     }
 auth:
   type: bearer

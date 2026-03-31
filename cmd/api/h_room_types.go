@@ -13,11 +13,11 @@ import (
 // Writes JSON of the created room_type record and its resource location.
 func (app *application) createRoomTypeHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		Title        string  `json:"title"`
-		BaseRate     float64 `json:"base_rate"`
-		MaxOccupancy int     `json:"max_occupancy"`
-		BedCount     int     `json:"bed_count"`
-		HasBalcony   bool    `json:"has_balcony"`
+		Title        string   `json:"title"`
+		BaseRate     float64  `json:"base_rate"`
+		MaxOccupancy int      `json:"max_occupancy"`
+		BedCount     int      `json:"bed_count"`
+		Amenities    []string `json:"amenities"`
 	}
 
 	err := app.readJSON(w, r, &input)
@@ -31,7 +31,7 @@ func (app *application) createRoomTypeHandler(w http.ResponseWriter, r *http.Req
 		BaseRate:     input.BaseRate,
 		MaxOccupancy: input.MaxOccupancy,
 		BedCount:     input.BedCount,
-		HasBalcony:   input.HasBalcony,
+		Amenities:    input.Amenities,
 	}
 
 	v := validator.New()
@@ -130,11 +130,11 @@ func (app *application) updateRoomTypeHandler(w http.ResponseWriter, r *http.Req
 	}
 
 	var input struct {
-		Title        *string  `json:"title"`
-		BaseRate     *float64 `json:"base_rate"`
-		MaxOccupancy *int     `json:"max_occupancy"`
-		BedCount     *int     `json:"bed_count"`
-		HasBalcony   *bool    `json:"has_balcony"`
+		Title        *string   `json:"title"`
+		BaseRate     *float64  `json:"base_rate"`
+		MaxOccupancy *int      `json:"max_occupancy"`
+		BedCount     *int      `json:"bed_count"`
+		Amenities    *[]string `json:"amenities"`
 	}
 
 	err = app.readJSON(w, r, &input)
@@ -155,8 +155,8 @@ func (app *application) updateRoomTypeHandler(w http.ResponseWriter, r *http.Req
 	if input.BedCount != nil {
 		roomType.BedCount = *input.BedCount
 	}
-	if input.HasBalcony != nil {
-		roomType.HasBalcony = *input.HasBalcony
+	if input.Amenities != nil {
+		roomType.Amenities = *input.Amenities
 	}
 
 	v := validator.New()

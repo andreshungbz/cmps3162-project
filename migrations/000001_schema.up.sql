@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS room_type (
     base_rate NUMERIC(12, 2) NOT NULL,
     max_occupancy INT NOT NULL,
     bed_count INT NOT NULL,
-    has_balcony BOOLEAN NOT NULL
+    amenities TEXT[] NOT NULL DEFAULT '{}'
 );
 
 CREATE TABLE IF NOT EXISTS room (

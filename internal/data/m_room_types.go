@@ -8,16 +8,17 @@ import (
 	"time"
 
 	"github.com/andreshungbz/cmps3162-project/internal/validator"
+	"github.com/lib/pq"
 )
 
 // RoomType maps the room_type entity.
 type RoomType struct {
-	ID           int64   `json:"id"`
-	Title        string  `json:"title"`
-	BaseRate     float64 `json:"base_rate"`
-	MaxOccupancy int     `json:"max_occupancy"`
-	BedCount     int     `json:"bed_count"`
-	HasBalcony   bool    `json:"has_balcony"`
+	ID           int64    `json:"id"`
+	Title        string   `json:"title"`
+	BaseRate     float64  `json:"base_rate"`
+	MaxOccupancy int      `json:"max_occupancy"`
+	BedCount     int      `json:"bed_count"`
+	Amenities    []string `json:"amenities"`
 }
 
 // ValidateRoomType performs validation checks for a room_type record.
@@ -36,11 +37,11 @@ type RoomTypeModel struct {
 // Insert creates a room_type record.
 func (m RoomTypeModel) Insert(rt *RoomType) error {
 	query := `
-		INSERT INTO room_type (title, base_rate, max_occupancy, bed_count, has_balcony)
+		INSERT INTO room_type (title, base_rate, max_occupancy, bed_count, amenities)
 		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id`
 
-	args := []any{rt.Title, rt.BaseRate, rt.MaxOccupancy, rt.BedCount, rt.HasBalcony}
+	args := []any{rt.Title, rt.BaseRate, rt.MaxOccupancy, rt.BedCount, pq.Array(rt.Amenities)}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -51,7 +52,7 @@ func (m RoomTypeModel) Insert(rt *RoomType) error {
 // Get retrieves a single room_type record by id.
 func (m RoomTypeModel) Get(id int64) (*RoomType, error) {
 	query := `
-		SELECT id, title, base_rate, max_occupancy, bed_count, has_balcony
+		SELECT id, title, base_rate, max_occupancy, bed_count, amenities
 		FROM room_type
 		WHERE id = $1`
 
@@ -59,7 +60,7 @@ func (m RoomTypeModel) Get(id int64) (*RoomType, error) {
 	defer cancel()
 
 	var rt RoomType
-	err := m.DB.QueryRowContext(ctx, query, id).Scan(&rt.ID, &rt.Title, &rt.BaseRate, &rt.MaxOccupancy, &rt.BedCount, &rt.HasBalcony)
+	err := m.DB.QueryRowContext(ctx, query, id).Scan(&rt.ID, &rt.Title, &rt.BaseRate, &rt.MaxOccupancy, &rt.BedCount, pq.Array(&rt.Amenities))
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -75,7 +76,7 @@ func (m RoomTypeModel) Get(id int64) (*RoomType, error) {
 // GetAll retrieves multiple room_type records (filterable).
 func (m RoomTypeModel) GetAll(title string, filters Filters) ([]*RoomType, Metadata, error) {
 	query := fmt.Sprintf(`
-		SELECT count(*) OVER(), id, title, base_rate, max_occupancy, bed_count, has_balcony
+		SELECT count(*) OVER(), id, title, base_rate, max_occupancy, bed_count, amenities
 		FROM room_type
 		WHERE (to_tsvector('simple', title) @@ plainto_tsquery('simple', $1) OR $1 = '')
 		ORDER BY %s %s, id ASC
@@ -98,7 +99,7 @@ func (m RoomTypeModel) GetAll(title string, filters Filters) ([]*RoomType, Metad
 	roomTypes := []*RoomType{}
 	for rows.Next() {
 		var rt RoomType
-		err := rows.Scan(&totalRecords, &rt.ID, &rt.Title, &rt.BaseRate, &rt.MaxOccupancy, &rt.BedCount, &rt.HasBalcony)
+		err := rows.Scan(&totalRecords, &rt.ID, &rt.Title, &rt.BaseRate, &rt.MaxOccupancy, &rt.BedCount, pq.Array(&rt.Amenities))
 		if err != nil {
 			return nil, Metadata{}, err
 		}
@@ -117,10 +118,10 @@ func (m RoomTypeModel) GetAll(title string, filters Filters) ([]*RoomType, Metad
 func (m RoomTypeModel) Update(rt *RoomType) error {
 	query := `
 		UPDATE room_type
-		SET title = $1, base_rate = $2, max_occupancy = $3, bed_count = $4, has_balcony = $5
+		SET title = $1, base_rate = $2, max_occupancy = $3, bed_count = $4, amenities = $5
 		WHERE id = $6`
 
-	args := []any{rt.Title, rt.BaseRate, rt.MaxOccupancy, rt.BedCount, rt.HasBalcony, rt.ID}
+	args := []any{rt.Title, rt.BaseRate, rt.MaxOccupancy, rt.BedCount, pq.Array(rt.Amenities), rt.ID}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
