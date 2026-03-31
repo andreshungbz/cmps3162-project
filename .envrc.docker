@@ -6,3 +6,9 @@ export RATE_LIMITER_BURST=4
 export RATE_LIMITER_ENABLED=true
 export TIMEOUT=30
 export CORS_TRUSTED_ORIGINS=
+
+export SMTP_HOST=sandbox.smtp.mailtrap.io
+export SMTP_PORT=25
+export MAILTRAP_SMTP_USERNAME=
+export MAILTRAP_SMTP_PASSWORD=
+export SMTP_SENDER="Hotel Semester Project <no-reply@hotelproject.andreshung.com>"

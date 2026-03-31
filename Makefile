@@ -33,7 +33,12 @@ run:
 		-limiter-burst=${RATE_LIMITER_BURST} \
 		-limiter-enabled=${RATE_LIMITER_ENABLED} \
 		-timeout=${TIMEOUT} \
-		-cors-trusted-origins=${CORS_TRUSTED_ORIGINS}
+		-cors-trusted-origins=${CORS_TRUSTED_ORIGINS} \
+		-smtp-host=${SMTP_HOST} \
+		-smtp-port=${SMTP_PORT} \
+		-smtp-username=${MAILTRAP_SMTP_USERNAME} \
+		-smtp-password=${MAILTRAP_SMTP_PASSWORD} \
+		-smtp-sender=${SMTP_SENDER}
 
 # ==================================================================================== #
 # DATABASE MIGRATIONS

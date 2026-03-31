@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/andreshungbz/cmps3162-project/internal/data"
+	"github.com/andreshungbz/cmps3162-project/internal/mailer"
 	"github.com/andreshungbz/cmps3162-project/internal/vcs"
 	_ "github.com/lib/pq"
 )
@@ -36,6 +37,13 @@ type config struct {
 		burst   int
 		enabled bool
 	}
+	smtp struct {
+		host     string
+		port     int
+		username string
+		password string
+		sender   string
+	}
 	cors struct {
 		trustedOrigins []string
 	}
@@ -47,6 +55,7 @@ type application struct {
 	config config
 	logger *slog.Logger
 	models data.Models
+	mailer *mailer.Mailer
 	wg     sync.WaitGroup
 }
 
@@ -68,6 +77,13 @@ func main() {
 	flag.Float64Var(&cfg.limiter.rps, "limiter-rps", 2, "Rate limiter maximum requests per second")
 	flag.IntVar(&cfg.limiter.burst, "limiter-burst", 4, "Rate limiter maximum burst")
 	flag.BoolVar(&cfg.limiter.enabled, "limiter-enabled", true, "Enable rate limiter")
+
+	// SMTP email server flags
+	flag.StringVar(&cfg.smtp.host, "smtp-host", "sandbox.smtp.mailtrap.io", "SMTP host")
+	flag.IntVar(&cfg.smtp.port, "smtp-port", 25, "SMTP port")
+	flag.StringVar(&cfg.smtp.username, "smtp-username", "", "SMTP username")
+	flag.StringVar(&cfg.smtp.password, "smtp-password", "", "SMTP password")
+	flag.StringVar(&cfg.smtp.sender, "smtp-sender", "Hotel Semester Project <no-reply@hotelproject.andreshung.com>", "SMTP sender")
 
 	// CORS trusted origins flag
 	flag.Func("cors-trusted-origins", "Trusted CORS origins (space separated)", func(val string) error {
@@ -96,6 +112,14 @@ func main() {
 	defer db.Close()
 	logger.Info("Database connection pool established")
 
+	// MAILER
+
+	mailer, err := mailer.New(cfg.smtp.host, cfg.smtp.port, cfg.smtp.username, cfg.smtp.password, cfg.smtp.sender)
+	if err != nil {
+		logger.Error(err.Error())
+		os.Exit(1)
+	}
+
 	// METRICS
 
 	expvar.NewString("version").Set(version)
@@ -109,6 +133,7 @@ func main() {
 		config: cfg,
 		logger: logger,
 		models: data.NewModels(db),
+		mailer: mailer,
 	}
 
 	// start the API server

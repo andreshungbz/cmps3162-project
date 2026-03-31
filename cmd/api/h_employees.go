@@ -4,13 +4,14 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/andreshungbz/cmps3162-project/internal/data"
 	"github.com/andreshungbz/cmps3162-project/internal/validator"
 )
 
 // createEmployeeHandler calls Employee.Insert.
-// Writes JSON of the created employee record.
+// Writes JSON of the created employee record and sends an activation email.
 func (app *application) createEmployeeHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		// person attributes
@@ -95,14 +96,38 @@ func (app *application) createEmployeeHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	headers := make(http.Header)
+	headers.Set("Location", fmt.Sprintf("/v1/employees/%s", employee.WorkEmail))
+
+	// Default Permissions
+
 	// err = app.models.Permissions.AddForEmployee(employee.ID, "healthcheck:read")
 	// if err != nil {
 	// 	app.serverErrorResponse(w, r, err)
 	// 	return
 	// }
 
-	headers := make(http.Header)
-	headers.Set("Location", fmt.Sprintf("/v1/employees/%s", employee.WorkEmail))
+	// Activation Email
+
+	token, err := app.models.Tokens.New(employee.ID, 3*24*time.Hour, data.ScopeActivation)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	app.background(func() {
+		data := map[string]any{
+			"activationToken": token.Plaintext,
+			"employeeID":      employee.ID,
+			"employeeName":    employee.Name,
+			"employeeRole":    employee.Role,
+		}
+
+		err = app.mailer.Send(employee.WorkEmail, "employee_welcome.tmpl", data)
+		if err != nil {
+			app.logger.Error(err.Error())
+		}
+	})
 
 	err = app.writeJSON(w, http.StatusCreated, envelope{"employee": employee}, nil)
 	if err != nil {

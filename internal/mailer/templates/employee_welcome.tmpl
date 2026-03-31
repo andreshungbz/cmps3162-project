@@ -1,0 +1,45 @@
+{{define "subject"}}Welcome to the Hotel Project, {{.employeeName}}!{{end}}
+
+{{define "plainBody"}}
+Howdy!
+
+We're excited that you're joining our team as {{.employeeRole}}!
+
+For future reference, your Employee ID number is {{.employeeID}}.
+
+To activate your account, send a request to the `PUT /v1/activated/employees` endpoint with the following JSON body to activate your account:
+
+{"token": "{{.activationToken}}"}
+
+Please note that this is a one-time use token and it will expire in 3 days.
+
+Thanks,
+
+The Hotel Project Team
+{{end}}
+
+{{define "htmlBody"}}
+<!doctype html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.6; color: #333;">
+  <p>Howdy!</p>
+  <p>We're excited that you're joining our team as <strong>{{.employeeRole}}</strong>!</p>
+  <p>For future reference, your Employee ID number is {{.employeeID}}.</p>
+  <p>To activate your account, send a request to the <code style="background-color: #f4f4f4; padding: 2px 6px; border-radius: 4px; font-family: Consolas, Monaco, monospace; font-size: 13px;">PUT /v1/activated/employees</code> endpoint with the following JSON body to activate your account:</p>
+
+  <pre style="background-color: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto;">
+  {"token": "{{.activationToken}}"}</pre>
+
+  <p>Please note that this is a one-time use token and it will expire in 3 days.</p>
+  <p>Thanks,</p>
+  <p>The Hotel Project Team</p>
+</body>
+
+</html>
+{{end}}

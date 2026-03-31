@@ -194,3 +194,18 @@ func (app *application) readInt(qs url.Values, key string, defaultValue int, v *
 
 	return i
 }
+
+// background launches a function as a goroutine and handles panics for it.
+func (app *application) background(fn func()) {
+	// increment WaitGroup counter
+	app.wg.Go(func() {
+		defer func() {
+			pv := recover()
+			if pv != nil {
+				app.logger.Error(fmt.Sprintf("%v", pv))
+			}
+		}()
+
+		fn()
+	})
+}
