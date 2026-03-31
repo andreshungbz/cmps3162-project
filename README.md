@@ -14,7 +14,14 @@
 - Entity-Relationship Diagrams (ERD) can be found in the `docs` folder located at https://github.com/andreshungbz/cmps3162-project/tree/main/docs.
 - Google Slides presentation can be found at https://docs.google.com/presentation/d/1tE8GPZKjBMg3du9lbhShSSBfoenZ_GDl0b08cgz5pno/edit?usp=sharing.
 
+### Authentication/Authorization/Mail Demo Video
+
+{YouTube Link Pending}
+
 ### Running the Application
+
+> [!NOTE]
+> You must provide your own credentials for `MAILTRAP_SMTP_USERNAME` and `MAILTRAP_SMTP_PASSWORD` in the `.envrc` file in order to enable email functionality. This is primarily for activation emails when creating an employee.
 
 #### Docker Compose
 
