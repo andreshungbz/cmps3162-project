@@ -13,7 +13,5 @@ queryParams:
     value: ""
     description: "{number, floor, status_code}"
 auth:
-  type: bearer
-  credentials:
-    token: "{{TEST_OM_AUTH_TOKEN}}"
+  type: noauth
 order: 2779377977073216

@@ -3,6 +3,10 @@ name: metrics
 description: Displays a number of server statistics on requests, responses, and performance.
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/observability/metrics"
 method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
 settings:
   disabledSystemHeaders: []
 order: 1118498080148398

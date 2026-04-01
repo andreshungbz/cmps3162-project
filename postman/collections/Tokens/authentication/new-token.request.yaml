@@ -7,8 +7,8 @@ body:
   type: json
   content: |-
     {
-        "work_email": "",
-        "password": ""
+        "work_email": "dario@grandoceanview.com",
+        "password": "hotel_password"
     }
 examples: .resources/new-token.resources/examples
 order: 1773523060971

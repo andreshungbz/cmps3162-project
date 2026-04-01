@@ -4,7 +4,5 @@ description: Retrieves a single hotel record.
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/hotels/1"
 method: GET
 auth:
-  type: bearer
-  credentials:
-    token: "{{TEST_OM_AUTH_TOKEN}}"
+  type: noauth
 order: 1773546834756

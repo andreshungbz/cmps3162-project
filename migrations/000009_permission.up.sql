@@ -33,7 +33,9 @@ VALUES
     ('reservation:read'), -- 17
     ('reservation:write'), -- 18
     ('registration:read'), -- 19
-    ('registration:write'); -- 20
+    ('registration:write'), -- 20
+    ('healthcheck:read'), -- 21
+    ('metrics:read'); -- 22
 
 INSERT INTO employee_permission(employee_id, permission_id)
 VALUES
@@ -41,25 +43,26 @@ VALUES
     (1, 2),
     (1, 3),
     (1, 4),
-    (1, 5),
     (1, 6),
-    (1, 7),
     (1, 8),
     (1, 9),
     (1, 10),
+    (1, 21),
+    (1, 22),
 
-    (2, 7),
     (2, 8),
     (2, 15),
     (2, 16),
     (2, 17),
     (2, 18),
-    (2, 19),
     (2, 20),
+    (2, 21),
+    (2, 22),
 
-    (3, 7),
     (3, 8),
     (3, 11),
     (3, 12),
     (3, 13),
-    (3, 14);
+    (3, 14),
+    (3, 21),
+    (3, 22);

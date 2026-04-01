@@ -15,7 +15,5 @@ queryParams:
     value: ""
     description: "{id, title, base_rate}"
 auth:
-  type: bearer
-  credentials:
-    token: "{{TEST_OM_AUTH_TOKEN}}"
+  type: noauth
 order: 1459430464571654

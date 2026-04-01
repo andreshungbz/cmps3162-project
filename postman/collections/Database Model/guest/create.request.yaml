@@ -17,7 +17,5 @@ body:
         "contact_phone": "501-000-0000"
     }
 auth:
-  type: bearer
-  credentials:
-    token: "{{TEST_FD_AUTH_TOKEN}}"
+  type: noauth
 order: 4475270631104536

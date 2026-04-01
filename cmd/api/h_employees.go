@@ -101,11 +101,61 @@ func (app *application) createEmployeeHandler(w http.ResponseWriter, r *http.Req
 
 	// Default Permissions
 
-	// err = app.models.Permissions.AddForEmployee(employee.ID, "healthcheck:read")
-	// if err != nil {
-	// 	app.serverErrorResponse(w, r, err)
-	// 	return
-	// }
+	// all employees
+	err = app.models.Permissions.AddForEmployee(employee.ID, "healthcheck:read", "metrics:read")
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	// operations manager permissions
+	if employee.Role == "operations_manager" {
+		err = app.models.Permissions.AddForEmployee(employee.ID,
+			"hotel:read",
+			"hotel:write",
+			"department:read",
+			"department:write",
+			"room_type:write",
+			"room:write",
+			"employee:read",
+			"employee:write",
+		)
+		if err != nil {
+			app.serverErrorResponse(w, r, err)
+			return
+		}
+	}
+
+	// front desk permissions
+	if employee.Role == "front_desk" {
+		err = app.models.Permissions.AddForEmployee(employee.ID,
+			"room:write",
+			"guest:read",
+			"guest:write",
+			"reservation:read",
+			"reservation:write",
+			"registration:write",
+		)
+		if err != nil {
+			app.serverErrorResponse(w, r, err)
+			return
+		}
+	}
+
+	// housekeeper permissions
+	if employee.Role == "housekeeper" {
+		err = app.models.Permissions.AddForEmployee(employee.ID,
+			"room:write",
+			"housekeeping_task:read",
+			"housekeeping_task:write",
+			"maintenance_report:read",
+			"maintenance_report:write",
+		)
+		if err != nil {
+			app.serverErrorResponse(w, r, err)
+			return
+		}
+	}
 
 	// Activation Email
 

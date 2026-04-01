@@ -13,7 +13,5 @@ queryParams:
     value: ""
     description: "{hotel_id, room_number}"
 auth:
-  type: bearer
-  credentials:
-    token: "{{TEST_FD_AUTH_TOKEN}}"
+  type: noauth
 order: 1752552096950845

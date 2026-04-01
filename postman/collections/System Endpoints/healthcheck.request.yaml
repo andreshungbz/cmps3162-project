@@ -4,5 +4,7 @@ description: Checks the server status and system information.
 url: "{{SERVER_ADDRESS}}:{{SERVER_PORT}}/{{API_VERSION}}/healthcheck"
 method: GET
 auth:
-  type: noauth
+  type: bearer
+  credentials:
+    token: "{{TEST_OM_AUTH_TOKEN}}"
 order: 1773500463541

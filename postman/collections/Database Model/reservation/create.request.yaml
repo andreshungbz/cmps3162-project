@@ -16,7 +16,5 @@ body:
       "room_type_id": 1
     }
 auth:
-  type: bearer
-  credentials:
-    token: "{{TEST_FD_AUTH_TOKEN}}"
+  type: noauth
 order: 4061649029099091
