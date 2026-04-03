@@ -347,11 +347,6 @@ func (app *application) requireAuthenticatedEmployee(next http.HandlerFunc) http
 func (app *application) requireActivatedEmployee(next http.HandlerFunc) http.HandlerFunc {
 	fn := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		employee := app.contextGetEmployee(r)
-		if employee.IsAnonymous() {
-			app.authenticationRequiredResponse(w, r)
-			return
-		}
-
 		if !employee.Activated {
 			app.inactiveAccountResponse(w, r)
 			return
