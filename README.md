@@ -7,7 +7,7 @@
 | **Student Name**  | [Andres Hung](https://github.com/andreshungbz) |
 | **Student Email** | 2018118240@ub.edu.bz                           |
 | **Course**        | CMPS3162 - Advanced Databases                  |
-| **Due Date**      | March 24, 2026                                 |
+| **Due Date**      | April 7, 2026                                  |
 
 ### Test 1 Deliverables
 
@@ -16,7 +16,7 @@
 
 ### Authentication/Authorization/Mail Demo Video
 
-{YouTube Link Pending}
+https://youtu.be/CshMb9krVZg
 
 ### Running the Application
 
