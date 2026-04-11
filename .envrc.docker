@@ -3,7 +3,7 @@ export HOTEL_DB_DSN=postgres://hotel_user:hotel_password@postgres/hotel?sslmode=
 export PORT=4000
 export RATE_LIMITER_RPS=2
 export RATE_LIMITER_BURST=4
-export RATE_LIMITER_ENABLED=true
+export RATE_LIMITER_ENABLED=false
 export TIMEOUT=30
 export CORS_TRUSTED_ORIGINS=
 
