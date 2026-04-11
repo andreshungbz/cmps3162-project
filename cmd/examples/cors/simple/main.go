@@ -15,8 +15,8 @@ func main() {
 
 	// parse template from embedded filesystem
 	tmpl := template.Must(template.ParseFS(
-		ui.FS,
-		"html/examples/cors/simple/index.tmpl",
+		ui.ExamplesFS,
+		"examples/cors/simple/index.tmpl",
 	))
 
 	mux := http.NewServeMux()
