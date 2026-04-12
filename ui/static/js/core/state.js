@@ -6,10 +6,14 @@ export const state = {
     metadata: {},
     filters: {
       page: 1,
-      page_size: 5,
+      page_size: 6,
       name: '',
       country: '',
       sort: 'name',
+    },
+
+    ui: {
+      filtersOpen: false,
     },
 
     loading: false,

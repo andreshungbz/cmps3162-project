@@ -1,6 +1,9 @@
 import { emitter } from '../../core/event-emitter.js';
 import { state } from '../../core/state.js';
 
+import { validateGuestFilters } from './helpers.js';
+import { render } from './render.js';
+
 // setupHandlers applies event listeners for guests pagination and filters.
 export function setupHandlers() {
   const app = document.querySelector('#app');
@@ -13,24 +16,44 @@ export function setupHandlers() {
     emitter.emit('guests:pageChanged', Number(btn.dataset.page));
   });
 
+  // Filter Collapse Button
+  app.addEventListener('click', (e) => {
+    const toggleBtn = e.target.closest('#toggle-filters');
+    if (toggleBtn) {
+      state.guests.ui.filtersOpen = !state.guests.ui.filtersOpen;
+      render();
+    }
+  });
+
   // Filter Apply Button
   app.addEventListener('click', (e) => {
     if (e.target.id !== 'apply-filters') return;
 
-    // update name filter state
-    state.guests.filters.name = document.querySelector('#filter-name').value;
-    // update country filter state
-    state.guests.filters.country =
-      document.querySelector('#filter-country').value;
-    // update page_size filter state
-    state.guests.filters.page_size = Number(
-      document.querySelector('#filter-page-size').value,
-    );
-    // update sort state
-    state.guests.filters.sort = document.querySelector('#filter-sort').value;
+    const newFilters = {
+      name: document.querySelector('#filter-name').value,
+      country: document.querySelector('#filter-country').value,
+      page_size: Number(document.querySelector('#filter-page-size').value),
+      sort: document.querySelector('#filter-sort').value,
+    };
 
-    // reset page to 1 when applying filters
-    state.guests.filters.page = 1;
+    // run validation
+    const error = validateGuestFilters(newFilters);
+
+    if (error) {
+      state.guests.error = error;
+      render();
+      return;
+    }
+
+    // clear previous errors
+    state.guests.error = null;
+
+    // commit filters
+    state.guests.filters = {
+      ...state.guests.filters,
+      ...newFilters,
+      page: 1,
+    };
 
     emitter.emit('guests:fetch');
   });

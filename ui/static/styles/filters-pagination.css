@@ -1,0 +1,148 @@
+/* Filter Section */
+
+#filters {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px;
+  background-color: var(--neutral);
+  border: 2px solid var(--primary);
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#toggle-filters {
+  background: none;
+  cursor: pointer;
+  border: none;
+  font-size: 0.9rem;
+  color: var(--primary);
+}
+
+.controls.hidden {
+  display: none;
+}
+
+#filters label {
+  display: block;
+}
+
+#filters input,
+#filters select {
+  width: 100%;
+  padding: 5px;
+}
+
+button#apply-filters {
+  margin-top: 10px;
+  padding: 5px;
+  background-color: var(--primary);
+  font-family: 'Outfit', Arial, Helvetica, sans-serif;
+  color: white;
+}
+
+button#apply-filters:hover {
+  background-color: var(--secondary);
+  cursor: pointer;
+  color: black;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.text-search {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Pagination Section */
+
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  padding: 10px;
+  background-color: var(--secondary);
+  border: 2px solid var(--primary);
+}
+
+#pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-numbers {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.page-btn {
+  padding: 3px 10px;
+  transition: all 0.15s ease;
+  background: white;
+  cursor: pointer;
+  border: 1px solid var(--primary);
+  font-family: 'Outfit', Arial, Helvetica, sans-serif;
+  color: var(--primary);
+}
+
+.page-btn:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+.page-btn.active {
+  background-color: var(--primary);
+  cursor: default;
+  color: white;
+}
+
+.page-btn:disabled {
+  cursor: not-allowed;
+}
+
+.dots {
+  padding: 0 6px;
+  color: var(--primary);
+}
+
+/* Responsive Styling */
+
+@media (max-width: 500px) {
+  .pagination-wrapper {
+    padding: 8px;
+  }
+
+  #pagination {
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .page-numbers {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .page-btn {
+    padding: 5px 8px;
+    font-size: 0.85rem;
+  }
+
+  .dots {
+    padding: 0 4px;
+    font-size: 0.85rem;
+  }
+}

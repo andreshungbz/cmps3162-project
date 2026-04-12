@@ -1,0 +1,65 @@
+/* Guest Section Layout */
+
+.guests-section {
+  padding: 10px;
+}
+
+.guest-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.guest-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+  background: white;
+  border: 2px solid var(--primary);
+}
+
+.guest-card:hover {
+  transform: translateY(-2px);
+}
+
+.guest-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--secondary);
+}
+
+.guest-header h3 {
+  font-size: 1rem;
+  color: var(--primary);
+}
+
+.guest-country {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: var(--accent);
+}
+
+.guest-body p {
+  margin-bottom: 3px;
+  font-size: 0.9rem;
+}
+
+.guest-footer {
+  margin-top: auto;
+  padding-top: 5px;
+  border-top: 1px solid #eee;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #555;
+}
+
+.empty-state {
+  padding: 10px;
+  color: #555;
+}
