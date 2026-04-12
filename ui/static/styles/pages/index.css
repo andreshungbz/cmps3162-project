@@ -1,0 +1,10 @@
+.front-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-image {
+  display: block;
+  width: 100%;
+  border: 2px solid var(--primary);
+}

@@ -79,7 +79,8 @@ h6 {
   font-family: 'Outfit', Arial, Helvetica, sans-serif;
 }
 
-h2 {
+h2,
+p {
   margin-bottom: 10px;
 }
 
