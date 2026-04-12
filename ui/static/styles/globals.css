@@ -49,11 +49,10 @@ body::before {
 .container {
   display: flex;
   flex-direction: column;
-  opacity: 0.9;
   width: 100%;
   max-width: 1000px;
   min-height: 100vh;
-  background-color: var(--background);
+  background-color: rgba(237, 246, 249, 0.9); /* var(--background) with alpha */
 }
 
 .container > main {
