@@ -12,6 +12,8 @@ import (
 func (app *application) routes() http.Handler {
 	router := httprouter.New()
 
+	// BACKEND
+
 	// Defined handlers for 404 and 205 status code
 	router.NotFound = http.HandlerFunc(app.notFoundResponse)
 	router.MethodNotAllowed = http.HandlerFunc(app.methodNotAllowedResponse)
@@ -104,7 +106,23 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPost, "/v1/tokens/activation", app.createActivationTokenHandler)
 	router.HandlerFunc(http.MethodPost, "/v1/tokens/authentication", app.createAuthenticationTokenHandler)
 
-	// global middleware
+	// FRONTEND
+
+	// serve static files
+	router.ServeFiles("/static/*filepath", http.Dir("./ui/static"))
+
+	// index page
+	router.HandlerFunc(http.MethodGet, "/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./ui/static/index.html")
+	})
+
+	// guests page (pagination example)
+	router.HandlerFunc(http.MethodGet, "/guests", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./ui/static/pages/guests.html")
+	})
+
+	// GLOBAL MIDDLEWARE
+	
 	return app.requestLogger( // first middleware
 		app.metrics(
 			app.recoverPanic(
