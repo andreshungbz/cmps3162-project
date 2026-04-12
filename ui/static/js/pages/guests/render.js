@@ -27,7 +27,7 @@ function renderFilters() {
         </div>
 
         <div class="select-group">
-          <label for="filter-page-size">Page Size</label>
+          <label for="filter-page-size">Items Per Page</label>
           <select id="filter-page-size">
             <option value="1" ${state.guests.filters.page_size == 1 ? 'selected' : ''}>1</option>
             <option value="6" ${state.guests.filters.page_size == 6 ? 'selected' : ''}>6</option>
