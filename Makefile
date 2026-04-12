@@ -26,7 +26,7 @@ help:
 ## run: Run the cmp/api application
 .PHONY: run
 run:
-	go run ./cmd/api \
+	@go run ./cmd/api \
 		-db-dsn=${HOTEL_DB_DSN} \
 		-port=${PORT} \
 		-limiter-rps=${RATE_LIMITER_RPS} \
