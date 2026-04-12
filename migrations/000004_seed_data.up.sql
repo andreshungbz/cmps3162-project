@@ -6,8 +6,8 @@
 -- ====================================================================================
 
 INSERT INTO hotel (name, street, city, state, country, phone) VALUES
-    ('Grand Ocean View', '1234 Tailwind St', 'San Pedro', 'Belize', 'Belize', '501-111-0001'),
-    ('Secret Grove', '5678 Shallow Rd', 'San Ignacio', 'Cayo', 'Belize', '501-222-0002');
+    ('Grand Ocean View', '1234 Tailwind St', 'San Pedro', 'Belize', 'BZ', '501-111-0001'),
+    ('Secret Grove', '5678 Shallow Rd', 'San Ignacio', 'Cayo', 'BZ', '501-222-0002');
 
 INSERT INTO department (dept_name, budget) VALUES
     ('Hotel Operations', 100000),
@@ -21,7 +21,7 @@ INSERT INTO department (dept_name, budget) VALUES
 -- Hotel Operations
 
 INSERT INTO person (name, gender, street, city, country) VALUES
-    ('Angus Garcia', 'M', '78 Maple St', 'Belize City', 'Belize');
+    ('Angus Garcia', 'M', '78 Maple St', 'Belize City', 'BZ');
 
 INSERT INTO employee (id, hotel_id, department, manager_id, salary, ssn, work_email, work_phone, password_hash, employed, activated)
     SELECT id, 1, 'Hotel Operations', NULL, 60000, '123-45-6789', 'angus@grandoceanview.com', '501-111-1001', crypt('hotel_password', gen_salt('bf', 12))::BYTEA, TRUE, TRUE
@@ -36,7 +36,7 @@ INSERT INTO operations_manager (id, hotel_owner)
 -- Guest Services & Front Desk
 
 INSERT INTO person (name, gender, street, city, country) VALUES
-    ('Bea Sierra', 'F', '90 Cedar St', 'San Pedro', 'Belize');
+    ('Bea Sierra', 'F', '90 Cedar St', 'San Pedro', 'BZ');
 
 INSERT INTO employee (id, hotel_id, department, manager_id, salary, ssn, work_email, work_phone, password_hash, employed, activated)
     SELECT id, 1, 'Guest Services & Front Desk', 1, 40000, '987-65-4321', 'bea@grandoceanview.com', '501-222-1002', crypt('hotel_password', gen_salt('bf', 12))::BYTEA, TRUE, TRUE
@@ -50,7 +50,7 @@ INSERT INTO front_desk (id, shift)
 -- Housekeeping & Maintenance
 
 INSERT INTO person (name, gender, street, city, country) VALUES
-    ('Clara Mendoza', 'F', '120 Sea Rd', 'San Pedro', 'Belize');
+    ('Clara Mendoza', 'F', '120 Sea Rd', 'San Pedro', 'BZ');
 
 INSERT INTO employee (id, hotel_id, department, manager_id, salary, ssn, work_email, work_phone, password_hash, employed, activated)
     SELECT id, 1, 'Housekeeping & Maintenance', 1, 35000, '555-66-7777', 'clara@grandoceanview.com', '501-111-1003', crypt('hotel_password', gen_salt('bf', 12))::BYTEA, TRUE, TRUE
@@ -65,16 +65,16 @@ INSERT INTO housekeeper (id, shift)
 -- Guests
 
 INSERT INTO person (name, gender, street, city, country) VALUES
-    ('Mae Smith', 'F', '12 Oak St', 'Belize City', 'Belize'),
-    ('Greg Jones', 'M', '34 Pine St', 'San Pedro', 'Belize'),
-    ('Lara Bennett', 'F', '56 Palm St', 'San Pedro', 'Belize'),
-    ('Tom Rivera', 'M', '78 Mango St', 'San Pedro', 'Belize'),
-    ('Nina Patel', 'F', '90 Oak St', 'San Pedro', 'Belize'),
-    ('Carlos Mendez', 'M', '123 Reforma Ave', 'Mexico City', 'Mexico'),
-    ('Sofia Alvarez', 'F', '456 Juarez St', 'Guadalajara', 'Mexico'),
-    ('Daniel Thompson', 'M', '789 Maple Rd', 'Toronto', 'Canada'),
-    ('Emily Chen', 'F', '321 Oakwood Dr', 'Vancouver', 'Canada'),
-    ('Lucas Silva', 'M', '654 Copacabana Ave', 'Rio de Janeiro', 'Brazil');
+    ('Mae Smith', 'F', '12 Oak St', 'Belize City', 'BZ'),
+    ('Greg Jones', 'M', '34 Pine St', 'San Pedro', 'BZ'),
+    ('Lara Bennett', 'F', '56 Palm St', 'San Pedro', 'BZ'),
+    ('Tom Rivera', 'M', '78 Mango St', 'San Pedro', 'BZ'),
+    ('Nina Patel', 'F', '90 Oak St', 'San Pedro', 'BZ'),
+    ('Carlos Mendez', 'M', '123 Reforma Ave', 'Mexico City', 'MX'),
+    ('Sofia Alvarez', 'F', '456 Juarez St', 'Guadalajara', 'MX'),
+    ('Daniel Thompson', 'M', '789 Maple Rd', 'Toronto', 'CA'),
+    ('Emily Chen', 'F', '321 Oakwood Dr', 'Vancouver', 'CA'),
+    ('Lucas Silva', 'M', '654 Copacabana Ave', 'Rio de Janeiro', 'BR');
 
 INSERT INTO guest (id, passport_number, contact_email, contact_phone)
     SELECT id, 'A1234567', 'mae@example.com', '501-111-1234'
