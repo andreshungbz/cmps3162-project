@@ -121,6 +121,11 @@ func (app *application) routes() http.Handler {
 		http.ServeFile(w, r, "./ui/static/pages/guests.html")
 	})
 
+	// hotel image showcase page (asynchronous API example)
+	router.HandlerFunc(http.MethodGet, "/showcase", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./ui/static/pages/showcase.html")
+	})
+
 	// GLOBAL MIDDLEWARE
 	
 	return app.requestLogger( // first middleware
