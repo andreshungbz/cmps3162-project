@@ -19,4 +19,24 @@ export const state = {
     loading: false,
     error: null,
   },
+
+  // hotel image showcase
+  showcase: {
+    data: [],
+
+    uploadForm: {
+      file: null,
+      filter: 'grayscale',
+      isOpen: true,
+    },
+
+    ui: {
+      formOpen: false,
+      modalOpen: false,
+      selectedJob: null,
+    },
+
+    loading: false,
+    error: null,
+  },
 };

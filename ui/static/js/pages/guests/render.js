@@ -136,21 +136,21 @@ function renderPagination() {
 export function render() {
   const app = document.querySelector('#app');
 
-  let resultsContent = '';
+  let content = '';
 
   // choose the last component rendered
   if (state.guests.loading) {
-    resultsContent = renderLoading('Loading...');
+    content = renderLoading('Loading...');
   } else if (state.guests.error) {
-    resultsContent = renderError(state.guests.error);
+    content = renderError(state.guests.error);
   } else {
-    resultsContent = renderGuests();
+    content = renderGuests();
   }
 
   app.innerHTML = `
     <h2>Guests</h2>
     ${renderFilters()}
     ${renderPagination()}
-    ${resultsContent}
+    ${content}
   `;
 }

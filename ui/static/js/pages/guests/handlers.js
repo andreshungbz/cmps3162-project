@@ -16,7 +16,7 @@ export function setupHandlers() {
     emitter.emit('guests:pageChanged', Number(btn.dataset.page));
   });
 
-  // Filter Collapse Button
+  // Filters Toggle Button
   app.addEventListener('click', (e) => {
     const toggleBtn = e.target.closest('#toggle-filters');
     if (toggleBtn) {
@@ -25,7 +25,7 @@ export function setupHandlers() {
     }
   });
 
-  // Filter Apply Button
+  // Filters Apply Button
   app.addEventListener('click', (e) => {
     if (e.target.id !== 'apply-filters') return;
 

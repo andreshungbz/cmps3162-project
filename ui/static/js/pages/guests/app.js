@@ -22,13 +22,13 @@ emitter.on('guests:fetched', (data) => {
   render();
 });
 
-// guests:pageChanged -> update guests filters page then call DataService again
+// guests:pageChanged event -> update guests filters page then call DataService again
 emitter.on('guests:pageChanged', (page) => {
   state.guests.filters.page = page;
   emitter.emit('guests:fetch');
 });
 
-// guests:error -> set error message
+// guests:error event -> set error message
 emitter.on('guests:error', (error) => {
   state.guests.loading = false;
   state.guests.error = error;
