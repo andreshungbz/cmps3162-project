@@ -40,6 +40,11 @@ run:
 		-smtp-password=${MAILTRAP_SMTP_PASSWORD} \
 		-smtp-sender=${SMTP_SENDER}
 
+## run/worker: Run the Python worker application
+.PHONY: run/worker
+run/worker:
+	uv run --project worker python -m worker.main
+
 # ==================================================================================== #
 # DATABASE MIGRATIONS
 # ==================================================================================== #

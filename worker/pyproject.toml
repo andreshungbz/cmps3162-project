@@ -1,0 +1,6 @@
+[project]
+name = "worker"
+version = "0.1.0"
+description = "Worker for processing images"
+requires-python = ">=3.14"
+dependencies = []
