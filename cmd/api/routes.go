@@ -122,9 +122,9 @@ func (app *application) routes() http.Handler {
 	})
 
 	// hotel image showcase page (asynchronous API example)
-	router.HandlerFunc(http.MethodGet, "/showcase", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./ui/static/pages/showcase.html")
-	})
+	// router.HandlerFunc(http.MethodGet, "/showcase", func(w http.ResponseWriter, r *http.Request) {
+	// 	http.ServeFile(w, r, "./ui/static/pages/showcase.html")
+	// })
 
 	// GLOBAL MIDDLEWARE
 	
