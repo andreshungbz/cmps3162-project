@@ -1,4 +1,4 @@
-FROM golang:1.26.0-trixie
+FROM golang:1.26.2-trixie
 
 WORKDIR /app
 
