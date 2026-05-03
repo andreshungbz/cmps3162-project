@@ -58,7 +58,7 @@ function renderGuests() {
 
   // no entries
   if (state.guests.data.length === 0) {
-    return `<p>No guests found.</p>`;
+    return `<p class="no-guests">No guests found.</p>`;
   }
 
   return `
